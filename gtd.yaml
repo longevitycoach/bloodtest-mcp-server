@@ -1,0 +1,101 @@
+book:
+  title: "Getting Things Done"
+  author: "David Allen"
+  domain: "productivity"
+  description: "Méthode de gestion de la productivité et de l'organisation personnelle"
+  version: "1.0"
+
+concepts:
+  - name: "Capture"
+    description: "Collecter toutes les tâches et idées dans un système externe fiable"
+    prerequisites: []
+    related_concepts: ["Clarify", "Organize"]
+  
+  - name: "Clarify"
+    description: "Transformer les éléments capturés en actions concrètes"
+    prerequisites: ["Capture"]
+    related_concepts: ["Organize", "Two-Minute Rule"]
+  
+  - name: "Two-Minute Rule"
+    description: "Si une tâche prend moins de 2 minutes, la faire immédiatement"
+    prerequisites: ["Clarify"]
+    related_concepts: ["Organize"]
+  
+  - name: "Organize"
+    description: "Classer les actions par contexte et priorité"
+    prerequisites: ["Clarify"]
+    related_concepts: ["Review", "Context Lists"]
+  
+  - name: "Review"
+    description: "Révision régulière du système pour maintenir la confiance"
+    prerequisites: ["Organize"]
+    related_concepts: ["Weekly Review"]
+
+methods:
+  - name: "Inbox Processing"
+    description: "Traite une liste d'éléments selon la méthode GTD"
+    concepts_used: ["Capture", "Clarify", "Two-Minute Rule", "Organize"]
+    input_schema:
+      inbox_items:
+        type: "string"
+        description: "Liste des éléments à traiter (emails, notes, tâches...)"
+      current_contexts:
+        type: "string" 
+        description: "Contextes disponibles (@home, @office, @calls, etc.)"
+      time_available:
+        type: "string"
+        description: "Temps disponible pour le traitement"
+    prompt_template: |
+      Traite ces éléments selon la méthode GTD de David Allen.
+      
+      Éléments à traiter: {inbox_items}
+      Contextes disponibles: {current_contexts}
+      Temps disponible: {time_available}
+      
+      Pour chaque élément, détermine:
+      1. **Est-ce actionnable?** (Si non → Someday/Maybe, Reference, ou Trash)
+      2. **Quelle est la prochaine action?** (action concrète et physique)
+      3. **Prend-il moins de 2 minutes?** (Si oui → Do it now)
+      4. **Quel contexte?** (@home, @office, @calls, etc.)
+      5. **Est-ce un projet?** (Si oui → ajouter au Projects List)
+      
+      Organise le résultat par contexte et priorité.
+  
+  - name: "Weekly Review Setup"
+    description: "Prépare une revue hebdomadaire GTD personnalisée"
+    concepts_used: ["Review", "Weekly Review"]
+    input_schema:
+      current_projects:
+        type: "string"
+        description: "Projets en cours"
+      areas_of_focus:
+        type: "string"
+        description: "Domaines de responsabilité"
+      review_preferences:
+        type: "string"
+        description: "Préférences et contraintes pour la revue"
+    prompt_template: |
+      Crée un plan de revue hebdomadaire GTD personnalisé.
+      
+      Projets actuels: {current_projects}
+      Domaines de focus: {areas_of_focus}
+      Préférences: {review_preferences}
+      
+      Structure la revue hebdomadaire avec:
+      1. **Collect loose papers and materials**
+      2. **Get "IN" to empty** 
+      3. **Empty your head**
+      4. **Review Action Lists**
+      5. **Review Previous Calendar Data**
+      6. **Review Upcoming Calendar**
+      7. **Review Projects (and Outcomes)**
+      8. **Review Waiting For List**
+      9. **Review Relevant Checklists**
+      10. **Review Someday/Maybe List**
+      
+      Adapte chaque étape à ton contexte spécifique.
+
+custom_instructions: |
+  Applique strictement la méthodologie GTD de David Allen. Privilégie les actions concrètes
+  et physiques, organise par contexte, maintiens la distinction claire entre projets et 
+  actions. Encourage la capture systématique et la révision régulière.
