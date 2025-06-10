@@ -1,6 +1,6 @@
 {
     "mcpServers": {
-        "book-mcp-server": {
+        "mcp-server": {
         "command": "npx",
         "args": [
             "mcp-remote",
