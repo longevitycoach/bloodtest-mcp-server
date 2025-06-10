@@ -3,8 +3,10 @@ name = "book-mcp-server"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
     "fastmcp>=2.7.1",
+    "pip>=25.1.1",
+    "pyodide-build>=0.23.3",
     "pyyaml>=6.0.2",
 ]

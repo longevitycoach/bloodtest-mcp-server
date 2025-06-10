@@ -8,3 +8,13 @@ wheels/
 
 # Virtual environments
 .venv
+.venv-pyodide
+
+# Wrangler
+.wrangler
+
+#Pytest
+.pytest_cache
+
+# Node modules
+node_modules
