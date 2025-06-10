@@ -1,0 +1,85 @@
+book:
+  title: "Competitive Strategy"
+  author: "Michael Porter"
+  domain: "strategy"
+  description: "Techniques for analyzing industries and competition"
+  version: "1.0"
+
+concepts:
+  - name: "Five Forces"
+    description: "Model for analyzing the attractiveness of an industry based on 5 competitive forces"
+    prerequisites: []
+    related_concepts: ["Competitive Advantage", "Industry Analysis"]
+  
+  - name: "Generic Strategies"
+    description: "Three generic strategies: cost leadership, differentiation, focus"
+    prerequisites: ["Five Forces"]
+    related_concepts: ["Value Chain"]
+  
+  - name: "Value Chain"
+    description: "Analysis of value-creating activities within the company"
+    prerequisites: []
+    related_concepts: ["Generic Strategies"]
+
+methods:
+  - name: "Industry Analysis"
+    description: "Comprehensive industry analysis using Porter's Five Forces model"
+    concepts_used: ["Five Forces"]
+    input_schema:
+      industry_name:
+        type: "string"
+        description: "Name of the industry to analyze"
+      company_context:
+        type: "string"
+        description: "Company context (size, position, etc.)"
+      market_data:
+        type: "string"
+        description: "Available market data"
+    prompt_template: |
+      Perform a comprehensive analysis of the "{industry_name}" industry using Porter's Five Forces model.
+      
+      Company context: {company_context}
+      Market data: {market_data}
+      
+      For each force, analyze:
+      1. **Threat of new entrants**
+      2. **Bargaining power of suppliers**  
+      3. **Bargaining power of customers**
+      4. **Threat of substitute products**
+      5. **Intensity of competitive rivalry**
+      
+      Conclude with an assessment of the industry's attractiveness and strategic implications.
+    examples:
+      - industry: "Video streaming"
+        context: "Tech startup"
+        expected_output: "Detailed analysis with recommendations"
+  
+  - name: "Competitive Positioning"
+    description: "Defines the optimal competitive positioning according to the generic strategies"
+    concepts_used: ["Generic Strategies", "Value Chain"]
+    input_schema:
+      company_profile:
+        type: "string"
+        description: "Detailed company profile"
+      competitors_info:
+        type: "string"
+        description: "Information about main competitors"
+      resources_capabilities:
+        type: "string"
+        description: "Company's resources and capabilities"
+    prompt_template: |
+      Determine the optimal generic strategy for this company according to Porter.
+      
+      Company profile: {company_profile}
+      Competitors: {competitors_info}
+      Resources and capabilities: {resources_capabilities}
+      
+      Analyze:
+      1. **Feasibility of cost leadership strategy**
+      2. **Feasibility of differentiation strategy**
+      3. **Opportunities for focus (niche) strategy**
+      
+      Recommend the most appropriate strategy with detailed justification.
+
+custom_instructions: |
+  You are a business strategy expert trained in Michael Porter's methods. Rigorously apply theoretical frameworks while remaining practical and actionable. Always cite book concepts and explain their application in the given context.

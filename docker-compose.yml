@@ -8,4 +8,5 @@ services:
       - .:/app
     environment:
       - PYTHONUNBUFFERED=1
+      - ENV=PRODUCTION
     restart: unless-stopped 
