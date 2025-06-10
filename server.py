@@ -48,7 +48,7 @@ class BookMCPServer(ABC):
     def __init__(self, config_path: Path):
         self.logger = logging.getLogger(self.__class__.__name__)
         logging.basicConfig(
-            level=logging.DEBUG if os.environ.get("ENV") == "DEV" else logging.INFO,
+            level=logging.DEBUG if os.environ.get("ENV") == "DEV" else logging.DEBUG,
             format='%(asctime)s [%(levelname)s] %(name)s: %(message)s',
             handlers=[logging.StreamHandler()]
         )
