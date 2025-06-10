@@ -246,6 +246,6 @@ if __name__ == "__main__":
     mcp = BookMCPServer(config_path=config_path)
     
     if os.environ.get("ENV") == "DEV":
-        mcp.run(host="127.0.0.1", port=8000, transport="streamable-http")
+        mcp.run(host="127.0.0.1", port=8000, transport="sse")
     else:
-        mcp.run(host="0.0.0.0", port=8000, transport="streamable-http")
+        mcp.run(host="0.0.0.0", port=8000, transport="sse")
