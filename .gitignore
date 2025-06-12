@@ -18,3 +18,9 @@ wheels/
 
 # Node modules
 node_modules
+
+# Cursor 
+.cursor
+
+# Archives
+archive/

@@ -12,6 +12,9 @@ from pathlib import Path
 import logging
 import os
 
+# Import the sequential thinking tool
+from utils.sequential_thinking import setup_sequential_thinking_tool
+
 # Configuration de base pour un livre
 class BookConfig(BaseModel):
     title: str
@@ -19,26 +22,21 @@ class BookConfig(BaseModel):
     domain: str  # Ex: "strategy", "marketing", "leadership"
     description: str
     version: str = "1.0"
-    
-class ConceptConfig(BaseModel):
-    name: str
-    description: str
-    prerequisites: List[str] = []
-    related_concepts: List[str] = []
 
-class MethodConfig(BaseModel):
+class WorkflowConfig(BaseModel):
     name: str
     description: str
-    input_schema: Dict[str, Any]
-    concepts_used: List[str]
-    prompt_template: str
-    examples: List[Dict[str, Any]] = []
+    prompt: str
+
+class ToolConfig(BaseModel):
+    enabled: bool = True
+    config: Dict[str, Any] = Field(default_factory=dict)
 
 class BookKnowledgeConfig(BaseModel):
     book: BookConfig
-    concepts: List[ConceptConfig]
-    methods: List[MethodConfig]
+    workflows: List[WorkflowConfig]
     custom_instructions: str = ""
+    tools: Dict[str, ToolConfig] = Field(default_factory=dict)
 
 # =======================
 # CLASSE DE BASE ABSTRAITE
@@ -55,6 +53,7 @@ class BookMCPServer(ABC):
         self.logger.info(f"Initializing BookMCPServer with config: {config_path}")
         self.config = self._load_config(config_path)
         self.mcp = FastMCP(f"{self.config.book.title} - Activation MCP")
+        
         self._setup_tools()
         self._setup_prompts()
     
@@ -74,76 +73,56 @@ class BookMCPServer(ABC):
             raise
     
     def _setup_tools(self):
-        """Automatically configures tools based on the book's methods"""
-        self.logger.debug("Setting up dynamic tools for book methods.")
-        for method in self.config.methods:
-            self._create_dynamic_tool(method)
+        """Automatically configures tools based on the book's workflows and enabled tools"""
+        self.logger.debug("Setting up dynamic tools for book workflows.")
+        for workflow in self.config.workflows:
+            self._create_workflow_tool(workflow)
+        
         self.logger.debug("Setting up generic tools.")
         self._setup_generic_tools()
+        
+        # Setup configured tools
+        self.logger.debug("Setting up configured tools.")
+        self._setup_configured_tools()
+        
         self.logger.info("All tools set up successfully.")
     
-    def _create_dynamic_tool(self, method: MethodConfig):
-        """Dynamically creates an MCP tool for each book method"""
-        self.logger.debug(f"Creating dynamic tool for method: {method.name}")
-        input_model = self._create_input_model(method)
+    def _create_workflow_tool(self, workflow: WorkflowConfig):
+        """Creates an MCP tool for each workflow"""
+        self.logger.debug(f"Creating tool for workflow: {workflow.name}")
         
-        async def dynamic_method(request: input_model) -> str:
-            self.logger.info(f"Executing method: {method.name} with input: {request.dict()}")
-            return await self._execute_method(method, request.dict())
+        async def workflow_method() -> str:
+            self.logger.info(f"Executing workflow: {workflow.name}")
+            return await self._execute_workflow(workflow)
         
         # Configuration du décorateur
-        dynamic_method.__name__ = method.name.lower().replace(' ', '_')
-        dynamic_method.__doc__ = method.description
+        workflow_method.__name__ = workflow.name.lower().replace(' ', '_')
+        workflow_method.__doc__ = workflow.description
         
         # Enregistrement de l'outil
-        self.mcp.tool()(dynamic_method)
-        self.logger.debug(f"Tool registered: {dynamic_method.__name__}")
+        self.mcp.tool()(workflow_method)
+        self.logger.debug(f"Tool registered: {workflow_method.__name__}")
     
-    def _create_input_model(self, method: MethodConfig):
-        """Creates a dynamic Pydantic model based on the method's schema"""
-        self.logger.debug(f"Creating input model for method: {method.name}")
-        fields = {}
-        for field_name, field_info in method.input_schema.items():
-            if isinstance(field_info, dict):
-                description = field_info.get('description', '')
-                fields[field_name] = (str, Field(description=description))
-            else:
-                fields[field_name] = (str, Field())
-        
-        model = type(f"{method.name}Request", (BaseModel,), {
-            "__annotations__": {k: v[0] for k, v in fields.items()},
-            **{k: v[1] for k, v in fields.items()}
-        })
-        self.logger.debug(f"Input model created: {model.__name__}")
-        return model
-    
-    async def _execute_method(self, method: MethodConfig, inputs: Dict[str, Any]) -> str:
-        """Returns the final prompt for a book method with the provided inputs"""
-        self.logger.info(f"Building context and prompt for method: {method.name}")
+    async def _execute_workflow(self, workflow: WorkflowConfig) -> str:
+        """Returns the final prompt for a workflow"""
+        self.logger.info(f"Building context and prompt for workflow: {workflow.name}")
         try:
-            context = self._build_context(method, inputs)
-            final_prompt = self._build_prompt(method, context, inputs)
-            self.logger.debug(f"Prompt built for method {method.name}.")
+            context = self._build_context(workflow)
+            final_prompt = self._build_prompt(workflow, context)
+            self.logger.debug(f"Prompt built for workflow {workflow.name}.")
             return final_prompt
         except Exception as e:
-            self.logger.error(f"Error executing method {method.name}: {e}")
+            self.logger.error(f"Error executing workflow {workflow.name}: {e}")
             raise
     
-    def _build_context(self, method: MethodConfig, inputs: Dict[str, Any]) -> str:
-        """Builds the context with the book's concepts"""
-        self.logger.debug(f"Building context for method: {method.name}")
+    def _build_context(self, workflow: WorkflowConfig) -> str:
+        """Builds the context with the book's information"""
+        self.logger.debug(f"Building context for workflow: {workflow.name}")
         context_parts = []
         
         # Informations sur le livre
         context_parts.append(f"BOOK: {self.config.book.title} by {self.config.book.author}")
         context_parts.append(f"DOMAIN: {self.config.book.domain}")
-        
-        # Concepts utilisés par cette méthode
-        relevant_concepts = [c for c in self.config.concepts if c.name in method.concepts_used]
-        if relevant_concepts:
-            context_parts.append("\nKEY CONCEPTS:")
-            for concept in relevant_concepts:
-                context_parts.append(f"- {concept.name}: {concept.description}")
         
         # Instructions personnalisées
         if self.config.custom_instructions:
@@ -151,21 +130,17 @@ class BookMCPServer(ABC):
         
         return "\n".join(context_parts)
     
-    def _build_prompt(self, method: MethodConfig, context: str, inputs: Dict[str, Any]) -> str:
-        """Builds the final prompt by combining context, template, and inputs"""
-        self.logger.debug(f"Building prompt for method: {method.name}")
-        # Remplacement des variables dans le template
-        formatted_template = method.prompt_template
-        for key, value in inputs.items():
-            formatted_template = formatted_template.replace(f"{{{key}}}", str(value))
+    def _build_prompt(self, workflow: WorkflowConfig, context: str) -> str:
+        """Builds the final prompt by combining context and workflow prompt"""
+        self.logger.debug(f"Building prompt for workflow: {workflow.name}")
         
         final_prompt = f"""
 {context}
 
-METHOD TO APPLY: {method.name}
-{method.description}
+WORKFLOW TO APPLY: {workflow.name}
+{workflow.description}
 
-{formatted_template}
+{workflow.prompt}
 
 Strictly apply the book's methodology using the information provided.
 """
@@ -183,42 +158,39 @@ Strictly apply the book's methodology using the information provided.
                 "author": self.config.book.author,
                 "domain": self.config.book.domain,
                 "description": self.config.book.description,
-                "available_methods": [m.name for m in self.config.methods],
-                "concepts": [c.name for c in self.config.concepts]
+                "available_workflows": [w.name for w in self.config.workflows]
             }
         
         @self.mcp.tool()
-        async def list_methods() -> List[Dict[str, Any]]:
-            """Lists all available methods of the book"""
-            self.logger.info("list_methods called.")
+        async def list_workflows() -> List[Dict[str, Any]]:
+            """Lists all available workflows of the book"""
+            self.logger.info("list_workflows called.")
             return [
                 {
-                    "name": m.name,
-                    "description": m.description,
-                    "concepts_used": m.concepts_used,
-                    "input_fields": list(m.input_schema.keys())
+                    "name": w.name,
+                    "description": w.description
                 }
-                for m in self.config.methods
+                for w in self.config.workflows
             ]
+    
+    def _setup_configured_tools(self):
+        """Setup tools based on configuration"""
+        self.logger.debug("Setting up configured tools.")
         
-        @self.mcp.tool()
-        async def explain_concept(concept_name: str) -> str:
-            """Explains a specific concept from the book"""
-            self.logger.info(f"explain_concept called for: {concept_name}")
-            concept = next((c for c in self.config.concepts if c.name.lower() == concept_name.lower()), None)
-            if not concept:
-                self.logger.warning(f"Concept not found: {concept_name}")
-                return f"Concept '{concept_name}' not found."
-            
-            explanation = f"**{concept.name}**\n\n{concept.description}"
-            
-            if concept.prerequisites:
-                explanation += f"\n\n**Prerequisites:** {', '.join(concept.prerequisites)}"
-            
-            if concept.related_concepts:
-                explanation += f"\n\n**Related concepts:** {', '.join(concept.related_concepts)}"
-            
-            return explanation
+        # Setup sequential thinking if enabled
+        if self.config.tools.get("sequential_thinking", ToolConfig()).enabled:
+            self.logger.debug("Setting up sequential thinking tool.")
+            try:
+                setup_sequential_thinking_tool(self.mcp)
+                self.logger.info("Sequential thinking tool setup successfully.")
+            except Exception as e:
+                self.logger.error(f"Failed to setup sequential thinking tool: {e}")
+                raise
+        
+        # Add more tool setups here as needed
+        # Example:
+        # if self.config.tools.get("another_tool", ToolConfig()).enabled:
+        #     setup_another_tool(self.mcp)
     
     def _setup_prompts(self):
         """Configures system prompts (override if necessary)"""
@@ -241,7 +213,7 @@ Strictly apply the book's methodology using the information provided.
 
 if __name__ == "__main__":
 
-    config_path = Path("books/gtd.yaml")
+    config_path = Path("books/V3/structure.yaml")
 
     mcp = BookMCPServer(config_path=config_path)
     

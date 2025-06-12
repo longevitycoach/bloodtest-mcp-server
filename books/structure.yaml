@@ -1,0 +1,33 @@
+book:
+  title: "Getting Things Done"
+  author: "David Allen"
+  domain: "productivity"
+  description: "Productivity and personal organization management method"
+  version: "1.0"
+
+workflows:
+  - name : "Workflow 1"
+    description: "Collect all tasks and ideas in a reliable external system"
+    prompt: |
+      <ROLE></ROLE>
+      <INPUT_NEEDED></INPUT_NEEDED>
+      <PROCESS></PROCESS>
+      <OUTPUT_EXAMPLE></OUTPUT_EXAMPLE>
+      <SPECIFIC_CONSTRAINTS></SPECIFIC_CONSTRAINTS>
+      <TONE></TONE>
+      ...
+  - name : "Workflow 2"
+    description: "Collect all tasks and ideas in a reliable external system"
+    prompt: |
+      <ROLE></ROLE>
+      <INPUT_NEEDED></INPUT_NEEDED>
+      <PROCESS></PROCESS>
+      <OUTPUT_EXAMPLE></OUTPUT_EXAMPLE>
+      <SPECIFIC_CONSTRAINTS></SPECIFIC_CONSTRAINTS>
+      <TONE></TONE>
+      ...
+
+tools:
+  sequential_thinking:
+    enabled: true
+    config: {}  # Add any tool-specific configuration here

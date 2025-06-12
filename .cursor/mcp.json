@@ -1,10 +1,10 @@
 {
     "mcpServers": {
-        "mcp-server": {
+        "alita-mcp-server": {
         "command": "npx",
         "args": [
             "mcp-remote",
-            "http://127.0.0.1:8000/sse",
+            "http://localhost:8000/sse",
             "--transport",
             "sse-only"
         ]
