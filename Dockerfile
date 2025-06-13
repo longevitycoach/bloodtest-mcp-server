@@ -2,20 +2,20 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Installer uv
+# Install uv for faster dependency installation
 RUN pip install uv
 
-# Copier le fichier de dépendances
-COPY pyproject.toml .
+# Copy only requirements file first (for better caching)
+COPY requirements.txt ./
 
-# Installer les dépendances avec uv
-RUN uv pip install . --system
+# Install dependencies
+RUN uv pip install -r requirements.txt --system
 
-# Copier le reste de l'application
+# Copy the rest of the application
 COPY . .
 
-# Exposer le port utilisé par le serveur
-EXPOSE 8000
+# Create necessary directories
+RUN mkdir -p /app/faiss_index /app/resources /app/books /app/scripts /app/utils
 
-# Commande de lancement du serveur
-CMD ["uv", "run", "server.py"] 
+# Default command
+CMD ["python", "server.py"]

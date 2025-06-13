@@ -1,12 +1,24 @@
 services:
+  # Book MCP Server avec FAISS intégré
   book-mcp-server:
     container_name: book-mcp-server
     build: .
     ports:
       - "8000:8000"
     volumes:
-      - .:/app
+      - ./resources:/app/resources:ro  # Read-only pour les PDFs
+      - ./books:/app/books:ro          # Read-only pour la config
+      - ./faiss_index:/app/faiss_index # Read-write pour l'index
+      - ./utils:/app/utils:ro          # Code Python
+      - ./scripts:/app/scripts:ro      # Scripts
+      - ./server.py:/app/server.py:ro  # Server principal
     environment:
       - PYTHONUNBUFFERED=1
       - ENV=PRODUCTION
-    restart: unless-stopped 
+      - PDF_PATH=/app/resources/alita.pdf  # Votre PDF
+      - INDEX_NAME=getting_things_done_knowledge
+      - INDEX_DIRECTORY=/app/faiss_index
+      - FORCE_REINDEX=false
+    # Initialise le RAG puis lance le serveur
+    command: sh -c "python scripts/init_rag.py && python server.py"
+    restart: unless-stopped

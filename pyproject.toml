@@ -1,12 +1,22 @@
 [project]
 name = "book-mcp-server"
 version = "0.1.0"
-description = "Add your description here"
+description = "Book Knowledge MCP Server with FAISS RAG"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "fastmcp>=2.7.1",
-    "pip>=25.1.1",
-    "pyodide-build>=0.23.3",
+    "pydantic>=2.0.0",
     "pyyaml>=6.0.2",
+    # RAG dependencies with FAISS
+    "langchain>=0.3.25",
+    "langchain-community>=0.3.25",
+    "faiss-cpu>=1.7.4",  # Version CPU de FAISS
+    "pypdf>=3.0.0",
+    "sentence-transformers>=2.2.0",
+    "langchain-huggingface>=0.0.1",
 ]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

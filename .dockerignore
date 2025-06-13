@@ -1,0 +1,66 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+faiss_index/
+chroma_data/
+*.faiss
+*.pkl
+*.pdf
+!resources/*.pdf  # Autorise les PDFs dans resources/
+
+# Docker
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+
+# Git
+.git/
+.gitignore
+.github/
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Tests
+tests/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Large files
+*.log
+*.bak
+*.tmp
+node_modules/
+
+# Notebooks
+*.ipynb
+.ipynb_checkpoints/

@@ -1,0 +1,9 @@
+fastmcp>=2.7.1
+pydantic>=2.0.0
+pyyaml>=6.0.2
+langchain>=0.3.25
+langchain-community>=0.3.25
+faiss-cpu>=1.7.4
+pypdf>=3.0.0
+sentence-transformers>=2.2.0
+langchain-huggingface>=0.0.1

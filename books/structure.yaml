@@ -30,4 +30,13 @@ workflows:
 tools:
   sequential_thinking:
     enabled: true
-    config: {}  # Add any tool-specific configuration here
+    config: {}
+  
+  rag:
+    enabled: true
+    config:
+      index_name: "getting_things_done_knowledge"
+      index_directory: "./faiss_index"
+      chunk_size: 1000
+      chunk_overlap: 200
+      embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
