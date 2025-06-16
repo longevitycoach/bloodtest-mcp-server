@@ -330,7 +330,7 @@ def setup_rag_tool(mcp, rag_system: RAGSystem):
             "results": results
         }
     
-    @mcp.tool()
-    async def get_rag_stats() -> Dict[str, Any]:
-        """Get statistics about the RAG knowledge base"""
-        return rag_system.get_index_stats()
+    # @mcp.tool()
+    # async def get_rag_stats() -> Dict[str, Any]:
+    #     """Get statistics about the RAG knowledge base"""
+    #     return rag_system.get_index_stats()
