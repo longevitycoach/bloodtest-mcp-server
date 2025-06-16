@@ -1,5 +1,7 @@
 import asyncio
 import logging
+import json
+from mcp.types import TextContent
 from fastmcp.client import Client
 
 # Configure logging
@@ -48,14 +50,45 @@ async def main():
             try:
                 response = await client.call_tool(tool_name, query_params)
                 logger.info(f"Tool '{tool_name}' response:")
-                # Pretty print the response if it's a dictionary or list
-                if isinstance(response, (dict, list)):
-                    import json
-                    logger.info(json.dumps(response, indent=2, ensure_ascii=False))
+                
+                logger.info(f"Raw response object type: {type(response)}")
+
+                parsed_data = None
+                if isinstance(response, list) and len(response) > 0 and isinstance(response[0], TextContent):
+                    logger.info(f"Received TextContent: {str(response[0])[:200]}...")
+                    try:
+                        parsed_data = json.loads(response[0].text)
+                        logger.info("Successfully parsed JSON from TextContent.")
+                    except json.JSONDecodeError as je:
+                        logger.error(f"Failed to parse JSON from TextContent: {je}")
+                        logger.error(f"TextContent data: {response[0].text}")
                 else:
-                    logger.info(response)
+                    logger.warning(f"Unexpected response structure: {type(response)}. Expected list with TextContent.")
+
+                if parsed_data and isinstance(parsed_data, dict):
+                    if 'results' in parsed_data: # Specific handling for RAG output
+                        logger.info(f"  Query: {parsed_data.get('query')}")
+                        logger.info(f"  Number of results: {parsed_data.get('results_count')}")
+                        for i, res_item in enumerate(parsed_data.get('results', [])):
+                            logger.info(f"  --- Result {i+1} ---")
+                            logger.info(f"    Type: {type(res_item)}")
+                            content = res_item.get('content', str(res_item)) if isinstance(res_item, dict) else str(res_item)
+                            metadata = res_item.get('metadata', {}) if isinstance(res_item, dict) else {}
+                            score = res_item.get('similarity_score', 'N/A') if isinstance(res_item, dict) else 'N/A'
+                            
+                            logger.info(f"    Content (snippet): {content[:200]}{'...' if len(content) > 200 else ''}")
+                            logger.info(f"    Metadata: {metadata}")
+                            logger.info(f"    Score: {score}")
+                    else:
+                        # Generic dictionary printing for other successful JSON parses
+                        logger.info("  Parsed JSON (dictionary details):")
+                        for key, value in parsed_data.items():
+                            logger.info(f"    {key}: {str(value)[:200]}{'...' if len(str(value)) > 200 else ''}")
+                elif parsed_data: # If parsed_data is not a dict but something else (e.g. list from JSON)
+                    logger.info(f"  Parsed JSON (type: {type(parsed_data)}, snippet): {str(parsed_data)[:500]}{'...' if len(str(parsed_data)) > 500 else ''}")
+
             except Exception as e:
-                logger.error(f"Error calling tool '{tool_name}': {e}", exc_info=True)
+                logger.error(f"Error calling tool '{tool_name}' or processing its response: {e}", exc_info=True)
                 
     except ConnectionRefusedError:
         logger.error(f"Connection refused. Ensure the MCP server is running at {SERVER_URL}.")
