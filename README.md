@@ -137,7 +137,48 @@ This command will:
 
 The server running inside Docker will be accessible based on the port mapping in `docker-compose.yml` (e.g., `8000:8000` makes it available at `http://localhost:8000`).
 
-## 3. Testing with an MCP Client
+## 3. Deployment with Railway CLI
+
+You can also deploy this project to [Railway](https://railway.app/) using their command-line interface.
+
+### a. Railway CLI Prerequisites
+
+- Install the Railway CLI. Instructions can be found [here](https://docs.railway.app/develop/cli#installation).
+
+### b. Login to Railway
+
+Authenticate the CLI with your Railway account:
+
+```bash
+railway login
+```
+
+### c. Link to Your Railway Project
+
+Navigate to your local project's root directory and link it to your existing Railway project and service:
+
+```bash
+cd /path/to/Bloodtest-mcp-server
+railway link
+```
+
+Follow the prompts to select the appropriate project and service. If you haven't created a project/service on Railway yet, do so through their web dashboard first.
+
+### d. Deploy
+
+Once linked, deploy your project:
+
+```bash
+railway up
+```
+
+This command will build and deploy your application based on your Railway project settings (e.g., if it uses a Dockerfile or Nixpacks). The `command` specified in your `docker-compose.yml` ( `sh -c "python scripts/init_rag.py && python server.py"`) or a similar start command in your Railway service settings will be used to initialize the RAG index and start the server.
+
+### e. Monitor Deployment
+
+You can monitor the deployment status and view logs on your Railway project dashboard.
+
+## 4. Testing with an MCP Client
 
 A simple Python script, `client_test.py` (located in the project root), can be used to interact with the running MCP server. See the script for an example of how to connect and call a tool.
 
@@ -148,19 +189,19 @@ source .venv/bin/activate # If applicable
 python client_test.py
 ```
 
-## Features
+## 5. Features
 
 - Dynamic tool generation from book YAML config
 - FastMCP-based server
 - Easily extensible for any book or methodology
 - Dockerized for easy deployment
 
-## Prerequisites
+## 6. Prerequisites
 
 - [Docker](https://www.docker.com/get-started)
 - [Docker Compose](https://docs.docker.com/compose/)
 
-## Quick Start
+## 7. Quick Start
 
 1. **Clone the repository**
 
@@ -196,7 +237,7 @@ python client_test.py
       python3 scripts/init_rag.py
       ```
 
-## Development
+## 8. Development
 
 - The code is mounted as a volume in the container, so changes are reflected immediately (except for dependency changes).
 - To install new dependencies, update `pyproject.toml` or use uv and rebuild the image.
