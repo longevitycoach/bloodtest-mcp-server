@@ -17,5 +17,7 @@ COPY . .
 # Create necessary directories
 RUN mkdir -p /app/faiss_index /app/resources /app/books /app/scripts /app/utils
 
+EXPOSE 8000
+
 # Default command
 CMD ["sh", "-c", "python scripts/init_rag.py && python server.py"]
