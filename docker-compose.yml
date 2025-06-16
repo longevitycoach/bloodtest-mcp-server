@@ -15,7 +15,7 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - ENV=PRODUCTION
-      - PDF_PATH=/app/resources/alita.pdf  # Votre PDF
+      - PDF_PATH=/app/resources/gtd.pdf  # Votre PDF
       - INDEX_NAME=getting_things_done_knowledge
       - INDEX_DIRECTORY=/app/faiss_index
       - FORCE_REINDEX=false
