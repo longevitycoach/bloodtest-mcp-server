@@ -18,4 +18,4 @@ COPY . .
 RUN mkdir -p /app/faiss_index /app/resources /app/books /app/scripts /app/utils
 
 # Default command
-sh -c "python scripts/init_rag.py && python server.py"
+CMD ["sh", "-c", "python scripts/init_rag.py && python server.py"]
