@@ -2,59 +2,151 @@
 
 This project implements a Retrieval-Augmented Generation (RAG) system that acts as a specialized health coach. It leverages a knowledge base of indexed books to provide personalized nutrition and supplement therapy plans based on user-provided health data, such as blood test results.
 
-## 1. Setup and Initialization
+## 1. Local Development Setup
 
-First, ensure you have the required dependencies installed. Then, you need to create a knowledge base by indexing your source documents (e.g., PDF books).
+Follow these steps to set up and run the project on your local machine.
 
-### a. Install Dependencies
+### a. Local Prerequisites
 
-Install the necessary Python packages:
+- Python 3.9 or higher.
+- `pip` and `venv` (usually included with Python).
+
+### b. Create and Activate Virtual Environment
+
+It's highly recommended to use a virtual environment to manage project dependencies.
+
+```bash
+# Navigate to the project root directory
+cd /path/to/Bloodtest-mcp-server
+
+# Create a virtual environment (e.g., named .venv)
+python3 -m venv .venv
+
+# Activate the virtual environment
+# On macOS/Linux:
+source .venv/bin/activate
+# On Windows:
+# .venv\Scripts\activate
+```
+
+### c. Install Dependencies
+
+With the virtual environment activated, install the required Python packages:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### b. Initialize the RAG
+### d. Initialize the RAG Knowledge Base
 
-The `scripts/init_rag.py` script will process your PDF files located in the `books/` directory, create embeddings, and store them in a FAISS vector index.
+The `scripts/init_rag.py` script processes your PDF documents, creates embeddings, and stores them in a FAISS vector index. This script uses environment variables for configuration:
 
-1. Place your PDF books inside the `/books` directory.
-2. Run the initialization script:
+- `PDF_DIRECTORY`: Path to the directory containing your PDF files (e.g., `resources`).
+- `INDEX_NAME`: The desired name for your FAISS index (e.g., `supplement-therapy`). This **must** match the `index_name` in `books/structure.yaml`.
+- `INDEX_DIRECTORY`: Directory where the FAISS index will be saved (defaults to `faiss_index`).
+- `FORCE_REINDEX`: Set to `true` to force re-indexing even if an index with the same name exists (defaults to `false`).
+
+**Example command to run the script:**
 
 ```bash
-python scripts/init_rag.py
+# Ensure your virtual environment is active
+# Make sure your PDFs are in the 'resources' directory (or update PDF_DIRECTORY)
+
+sh -c 'source .venv/bin/activate && INDEX_NAME="supplement-therapy" PDF_DIRECTORY="resources" python scripts/init_rag.py
 ```
 
-This will create a `faiss_index` directory containing the indexed knowledge base for your specific books.
+This will create files like `faiss_index/supplement-therapy.faiss` and `faiss_index/supplement-therapy_hashes.json`.
 
-## 2. Customizing the AI Behavior (`structure.yaml`)
+### e. Customize AI Behavior (`books/structure.yaml`)
 
-The behavior of the AI coach is defined in the `books/structure.yaml` file. After initializing the RAG, you must adapt this file to match your specific domain and the content of your indexed books.
+The AI's behavior is defined in `books/structure.yaml`. Adapt this file to your specific domain and the content of your indexed books. Critically, ensure the `rag.config.index_name` in this file matches the `INDEX_NAME` you used during RAG initialization.
 
-This file controls the AI's role, the information it needs, the process it follows, and the constraints it operates under.
+```yaml
+# ... other configurations ...
+rag:
+  enabled: true
+  config:
+    index_name: "supplement-therapy" # <-- MUST MATCH YOUR INDEX_NAME
+    index_directory: "./faiss_index"
+# ... other configurations ...
+```
 
-### Key Sections to Adapt
+Refer to the comments within `structure.yaml` or previous discussions for details on customizing `<ROLE>`, `<INPUT_NEEDED>`, `<PROCESS>`, etc.
 
-- `<ROLE>`: Define the AI's persona. For example, an "expert in nutrition and supplement therapy."
-- `<INPUT_NEEDED>`: Specify the data the AI should collect from the user (e.g., blood markers, lifestyle habits, health goals).
-- `<PROCESS>`: Outline the step-by-step workflow the AI should follow. This typically includes data assessment, analysis using the indexed knowledge, and plan formulation.
-- `<OUTPUT_EXAMPLE>`: Provide a template for the AI's final output, such as a personalized supplement plan.
-- `<SPECIFIC_CONSTRAINTS>`: Set mandatory rules for the AI, such as safety disclaimers, citing sources, and avoiding medical diagnoses.
-- `<TONE>`: Describe the desired communication style (e.g., empathetic, scientific, supportive).
+### f. Run the MCP Server Locally
 
-By carefully editing these sections, you can tailor the AI's behavior to your exact needs, ensuring it leverages your indexed books effectively and safely.
-
-## 3. Running the MCP Server
-
-Once the RAG is initialized and `structure.yaml` is customized, you can start the MCP server. The server will automatically load the existing FAISS index from the `./faiss_index` directory.
-
-Run the following command in your terminal:
+Once the RAG is initialized and `structure.yaml` is configured, start the MCP server:
 
 ```bash
+# Ensure your virtual environment is active
 python server.py
 ```
 
-The server will start, and the RAG-powered health coach will be ready to receive queries and provide personalized guidance based on its configured workflow and knowledge base.
+The server will start (defaulting to `http://0.0.0.0:8000`), load the FAISS index, and expose the configured MCP tools.
+
+## 2. Docker Setup
+
+Docker can simplify deployment by packaging the application and its dependencies.
+
+### a. Docker Prerequisites
+
+- Docker Engine
+- Docker Compose
+
+### b. Configure `docker-compose.yml`
+
+Review and adjust `docker-compose.yml`. Key environment variables for the `app` service that affect RAG initialization:
+
+- `PDF_DIRECTORY`: **Crucial for Docker.** This should point to the path *inside the container* where your PDFs are mounted. For example, if you mount `./resources` to `/app/resources`, set `PDF_DIRECTORY=/app/resources`.
+- `INDEX_NAME`: Set this to your desired index name (e.g., `supplement-therapy`). This is passed to `init_rag.py`.
+- `INDEX_DIRECTORY`: Path *inside the container* for the FAISS index (e.g., `/app/faiss_index`).
+- `FORCE_REINDEX`: Set to `false` or `true`.
+
+```yaml
+services:
+  app:
+    # ... other docker compose configurations ...
+    environment:
+      - PYTHONUNBUFFERED=1
+      - ENV=PRODUCTION
+      - PDF_DIRECTORY=/app/resources  # PDFs are mounted here from ./resources
+      - INDEX_NAME=supplement-therapy # Matches structure.yaml
+      - INDEX_DIRECTORY=/app/faiss_index
+      - FORCE_REINDEX=false
+    # The command already runs init_rag.py then server.py
+    command: sh -c "python scripts/init_rag.py && python server.py"
+```
+
+Ensure your local PDF directory (e.g., `./resources`) and FAISS index directory (e.g., `./faiss_index`) are correctly mounted as volumes.
+
+### c. Build and Run with Docker Compose
+
+From the project root directory:
+
+```bash
+docker-compose up --build -d
+```
+
+This command will:
+
+1. Build the Docker image (if not already built or if Dockerfile changed).
+2. Create and start the container(s) in detached mode (`-d`).
+3. The `command` in `docker-compose.yml` will first run `scripts/init_rag.py` (using the environment variables set in `docker-compose.yml`) and then start `server.py`.
+
+### d. Accessing the Server
+
+The server running inside Docker will be accessible based on the port mapping in `docker-compose.yml` (e.g., `8000:8000` makes it available at `http://localhost:8000`).
+
+## 3. Testing with an MCP Client
+
+A simple Python script, `client_test.py` (located in the project root), can be used to interact with the running MCP server. See the script for an example of how to connect and call a tool.
+
+```bash
+# Ensure the server is running (either locally or in Docker)
+# If running locally, ensure your virtual environment is active for the client too, or that 'mcp' is globally available.
+source .venv/bin/activate # If applicable
+python client_test.py
+```
 
 ## Features
 

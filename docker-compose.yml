@@ -16,7 +16,7 @@ services:
       - PYTHONUNBUFFERED=1
       - ENV=PRODUCTION
       - PDF_PATH=/app/resources/gtd.pdf  # Votre PDF
-      - INDEX_NAME=book_knowledge
+      - INDEX_NAME=supplement-therapy
       - INDEX_DIRECTORY=/app/faiss_index
       - FORCE_REINDEX=false
     # Initialise le RAG puis lance le serveur

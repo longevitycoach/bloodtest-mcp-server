@@ -142,7 +142,7 @@ tools:
   rag:
     enabled: true
     config:
-      index_name: "supplyment_therapy_knowledge"
+      index_name: "supplement-therapy"
       index_directory: "./faiss_index"
       chunk_size: 1000
       chunk_overlap: 200
