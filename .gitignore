@@ -27,3 +27,6 @@ archive/
 
 # Faiss
 faiss_index/
+
+# PDFs
+scripts/pdfs/

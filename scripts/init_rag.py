@@ -25,22 +25,29 @@ def main():
     """Point d'entrée principal"""
     
     # Configuration depuis les variables d'environnement
-    pdf_path = os.getenv("PDF_PATH", "/app/books/book.pdf")
+    pdf_directory = os.getenv("PDF_DIRECTORY", "scripts/pdfs")
     index_name = os.getenv("INDEX_NAME", "book_knowledge")
-    index_directory = os.getenv("INDEX_DIRECTORY", "/app/faiss_index")
+    index_directory = os.getenv("INDEX_DIRECTORY", "faiss_index")
     force_reindex = os.getenv("FORCE_REINDEX", "false").lower() == "true"
     
     logger.info("=== RAG Initialization Script (FAISS) ===")
-    logger.info(f"PDF Path: {pdf_path}")
+    logger.info(f"PDF Directory: {pdf_directory}")
     logger.info(f"Index Name: {index_name}")
     logger.info(f"Index Directory: {index_directory}")
     logger.info(f"Force Reindex: {force_reindex}")
     
-    # Vérifier que le PDF existe
-    if not Path(pdf_path).exists():
-        logger.error(f"PDF not found: {pdf_path}")
+    # Trouver les PDFs dans le répertoire
+    pdf_dir_path = Path(pdf_directory)
+    if not pdf_dir_path.is_dir():
+        logger.error(f"PDF directory not found: {pdf_dir_path}")
         sys.exit(1)
-    
+        
+    pdf_files = list(pdf_dir_path.glob("*.pdf"))
+    if not pdf_files:
+        logger.warning(f"No PDF files found in {pdf_dir_path}")
+
+    logger.info(f"Found {len(pdf_files)} PDF(s) to index in '{pdf_directory}'.")
+
     try:
         # Initialiser le système RAG
         rag_system = RAGSystem(
@@ -50,24 +57,30 @@ def main():
             chunk_overlap=200
         )
         
-        # Indexer le PDF
-        logger.info("Starting PDF indexation...")
-        result = rag_system.index_pdf(
-            pdf_path=pdf_path,
-            force_reindex=force_reindex
-        )
+        total_chunks_added = 0
         
-        if result["status"] == "success":
-            logger.info(f"✅ Successfully indexed {result['chunks_added']} chunks")
-        elif result["status"] == "already_indexed":
-            logger.info("✅ Document already indexed, skipping...")
-        else:
-            logger.error(f"❌ Indexation failed: {result.get('error', 'Unknown error')}")
-            sys.exit(1)
+        # Indexer chaque PDF
+        for pdf_path in pdf_files:
+            logger.info(f"--- Indexing {pdf_path.name} ---")
+            result = rag_system.index_pdf(
+                pdf_path=str(pdf_path),
+                force_reindex=force_reindex
+            )
+            
+            if result["status"] == "success":
+                chunks = result.get('chunks_added', 0)
+                total_chunks_added += chunks
+                logger.info(f"✅ Successfully indexed {chunks} chunks from {pdf_path.name}")
+            elif result["status"] == "already_indexed":
+                logger.info(f"✅ {pdf_path.name} already indexed, skipping...")
+            else:
+                logger.error(f"❌ Indexation failed for {pdf_path.name}: {result.get('error', 'Unknown error')}")
         
-        # Afficher les stats
+        logger.info(f"--- Total new chunks added: {total_chunks_added} ---")
+
+        # Afficher les stats finales
         stats = rag_system.get_index_stats()
-        logger.info(f"Index stats: {stats}")
+        logger.info(f"Final index stats: {stats}")
         
         logger.info("=== RAG initialization completed successfully ===")
         
