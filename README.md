@@ -2,6 +2,186 @@
 
 This project implements a Retrieval-Augmented Generation (RAG) system that acts as a specialized health coach. It leverages a knowledge base of indexed books to provide personalized nutrition and supplement therapy plans based on user-provided health data, such as blood test results.
 
+## Blood Test Reference Values API
+
+TheBlood Test Reference Values API provides optimal and classical reference ranges for various blood test parameters based on medical guidelines. This API helps interpret blood test results by providing context about what values are considered optimal versus normal ranges.
+
+### Base URL
+
+All API endpoints are relative to the base URL of the service. For local development, this is typically `http://localhost:8000`.
+
+### Authentication
+
+No authentication is required for the API endpoints.
+
+### Endpoints
+
+#### 1. Get API Information
+
+Returns basic information about the API and available endpoints.
+
+- **URL**: `GET /`
+- **Response**:
+
+  ```json
+  {
+    "name": "Blood Test Reference Values API",
+    "version": "1.0.0",
+    "description": "API for retrieving optimal blood test reference values based on medical guidelines.",
+    "endpoints": {
+      "GET /parameters": "List all available parameters",
+      "GET /reference/{parameter}": "Get reference range for a specific parameter"
+    }
+  }
+  ```
+
+#### 2. List Available Parameters
+
+Returns a list of all available blood test parameters with their units.
+
+- **URL**: `GET /parameters`
+- **Response**:
+
+  ```json
+  {
+    "parameters": [
+      {
+        "parameter": "ferritin",
+        "unit": "ng/ml"
+      },
+      {
+        "parameter": "tsh",
+        "unit": "mIU/l"
+      },
+      {
+        "parameter": "vitamin_d",
+        "unit": "ng/ml"
+      },
+      {
+        "parameter": "vitamin_b12",
+        "unit": "pmol/l"
+      },
+      {
+        "parameter": "folate_rbc",
+        "unit": "ng/ml"
+      },
+      {
+        "parameter": "zinc",
+        "unit": "mg/l"
+      },
+      {
+        "parameter": "magnesium",
+        "unit": "mmol/l"
+      },
+      {
+        "parameter": "selenium",
+        "unit": "µg/l"
+      }
+    ]
+  }
+  ```
+
+#### 3. Get Reference Range for a Parameter
+
+Returns the reference range information for a specific blood test parameter.
+
+- **URL**: `GET /reference/{parameter}`
+- **Query Parameters**:
+  - `sex` (optional): Filter results by sex ("male" or "female") for sex-specific ranges
+- **Response**:
+
+  ```json
+  {
+    "parameter": "ferritin",
+    "unit": "ng/ml",
+    "optimal_range": "70–200 (optimal)",
+    "classical_range": "15-400 depending on sex and age",
+    "explanation": "Iron storage protein; reflects total body iron stores. Low levels indicate iron deficiency before anemia develops. High levels may indicate inflammation, infection, or iron overload conditions.",
+    "sex_specific": true,
+    "sex_specific_range": "premenopausal: 15–150, postmenopausal: 15–300, optimal: 70–200"
+  }
+  ```
+
+- **Error Responses**:
+  - `404 Not Found`: If the specified parameter is not found
+  - `422 Unprocessable Entity`: If the sex parameter is invalid
+
+### Example Usage
+
+#### Using cURL
+
+```bash
+# Get API information
+curl http://localhost:8000/
+
+# List all available parameters
+curl http://localhost:8000/parameters
+
+# Get reference range for ferritin
+curl http://localhost:8000/reference/ferritin
+
+# Get sex-specific reference range for ferritin (female)
+curl "http://localhost:8000/reference/ferritin?sex=female"
+```
+
+#### Using Python
+
+```python
+import requests
+
+# Get API information
+response = requests.get("http://localhost:8000/")
+print(response.json())
+
+# List all available parameters
+response = requests.get("http://localhost:8000/parameters")
+parameters = response.json()["parameters"]
+print(f"Available parameters: {[p['parameter'] for p in parameters]}")
+
+# Get reference range for ferritin
+response = requests.get("http://localhost:8000/reference/ferritin")
+print(f"Ferritin reference range: {response.json()['optimal_range']}")
+
+# Get sex-specific reference range for ferritin (female)
+response = requests.get(
+    "http://localhost:8000/reference/ferritin",
+    params={"sex": "female"}
+)
+print(f"Female ferritin reference range: {response.json()['sex_specific_range']}")
+```
+
+### Extending the Reference Values
+
+To add or modify reference values, edit the `reference_values.py` file in the `bloodtest_tools` package. The reference values are stored in a dictionary where each key is a parameter name and the value is a `ReferenceRange` object.
+
+Example:
+
+```python
+REFERENCE_VALUES = {
+    "ferritin": ReferenceRange(
+        parameter="ferritin",
+        unit="ng/ml",
+        optimal_range="70–200 (optimal)",
+        classical_range="15-400 depending on sex and age",
+        explanation=(
+            "Iron storage protein; reflects total body iron stores. "
+            "Low levels indicate iron deficiency before anemia develops. "
+            "High levels may indicate inflammation, infection, or iron overload conditions."
+        ),
+        sex_specific=True,
+        sex_specific_ranges={
+            "MALE": "15–300, optimal: 70–200",
+            "FEMALE": "premenopausal: 15–150, postmenopausal: 15–300, optimal: 70–200"
+        }
+    ),
+    # ... other parameters
+}
+```
+
+## Health Check Endpoint
+
+This project implements a Retrieval-Augmented Generation (RAG) system that acts as a specialized health coach. It leverages a knowledge base of indexed books to provide personalized nutrition and supplement therapy plans based on user-provided health data, such as blood test results.
+
 ## Health Check Endpoint
 
 The server provides a health check endpoint at `/health` that returns the current status of the service:
@@ -450,9 +630,112 @@ railway up
 
 This command will build and deploy your application based on your Railway project settings (e.g., if it uses a Dockerfile or Nixpacks). The `command` specified in your `docker-compose.yml` ( `sh -c "python scripts/init_rag.py && python server.py"`) or a similar start command in your Railway service settings will be used to initialize the RAG index and start the server.
 
-### e. Monitor Deployment
+## Blood Test Reference Values API
 
-You can monitor the deployment status and view logs on your Railway project dashboard.
+This service includes a comprehensive API for retrieving optimal blood test reference values based on medical guidelines from Dr. Ulrich Strunz and Dr. med. Helena Orfanos-Boeckel.
+
+### Available Endpoints
+
+#### List Available Parameters
+```
+GET /api/bloodtest/parameters
+```
+
+Returns a list of all available blood test parameters with their units.
+
+Example response:
+```json
+{
+  "parameters": [
+    {"parameter": "ferritin", "unit": "ng/ml"},
+    {"parameter": "tsh", "unit": "mIU/l"},
+    {"parameter": "vitamin_d", "unit": "ng/ml"},
+    ...
+  ]
+}
+```
+
+#### Get Reference Range
+```
+GET /api/bloodtest/reference/{parameter}
+```
+
+Get the reference range for a specific blood test parameter.
+
+**Query Parameters:**
+- `sex` (optional): Filter by sex (`male` or `female`)
+
+Example request:
+```
+GET /api/bloodtest/reference/ferritin?sex=female
+```
+
+Example response:
+```json
+{
+  "parameter": "ferritin",
+  "unit": "ng/ml",
+  "optimal_range": "70–200 (optimal)",
+  "classical_range": "15-400 depending on sex and age",
+  "explanation": "Iron storage protein; reflects total body iron stores...",
+  "sex_specific": true,
+  "sex_specific_range": "premenopausal: 15–150, postmenopausal: 15–300, optimal: 70–200"
+}
+```
+
+### Integration with Existing Workflow
+
+The Blood Test Reference Values API is automatically integrated into the existing health coach workflow. When processing blood test results, the system will:
+
+1. Identify the test parameters in the results
+2. Retrieve optimal reference values for each parameter
+3. Include these reference values in the analysis and recommendations
+
+### Available Parameters
+
+The following blood test parameters are currently supported:
+
+| Parameter | Unit | Description |
+|-----------|------|-------------|
+| ferritin | ng/ml | Iron storage protein |
+| tsh | mIU/l | Thyroid-stimulating hormone |
+| vitamin_d | ng/ml | 25-OH Vitamin D |
+| vitamin_b12 | pmol/l | Vitamin B12 (Holo-TC) |
+| folate_rbc | ng/ml | Red Blood Cell Folate |
+| zinc | mg/l | Zinc |
+| magnesium | mmol/l | Magnesium (whole blood) |
+| selenium | µg/l | Selenium |
+
+### Development
+
+To add new parameters or modify existing reference values, update the `REFERENCE_VALUES` dictionary in `bloodtest_tools/reference_values.py`.
+
+#### Running Tests
+
+```bash
+pytest tests/test_bloodtest_tools.py -v
+```
+
+#### Code Style
+
+This project uses `black` for code formatting and `flake8` for linting.
+
+```bash
+# Format code
+black .
+
+# Run linter
+flake8
+```
+
+### License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+### Acknowledgments
+
+- Reference values are based on the work of Dr. Ulrich Strunz and Dr. med. Helena Orfanos-Boeckel.
+- Built with [FastAPI](https://fastapi.tiangolo.com/), [Pydantic](https://pydantic-docs.helpmanual.io/), and [Uvicorn](https://www.uvicorn.org/).
 
 ## 4. Testing with an MCP Client
 

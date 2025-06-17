@@ -1,23 +1,72 @@
 # Git
 .git
 .gitignore
+.gitmodules
 
-# Python virtual environment
-.venv/
-venv/
-env/
-ENV/
-
-# Python cache
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
+.pytest_cache/
+.mypy_cache/
+*.egg-info/
+*.egg
 
-# FAISS index files are included in the image
+# Virtual Environment
+.venv/
+venv/
+env/
+ENV/
 
-# IDE/Editor specific
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Local development
+*.log
+logs/
+.coverage
+htmlcov/
+
+# IDE/Editor specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Build and distribution
+dist/
+build/
+*.egg-info/
+
+# Test related
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Documentation
+_build/
+*.pdf
+
+# FAISS index files (handled by volumes)
+faiss_index/
+
+# Local development data
+*.sqlite3
+*.db
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 .idea/
 .vscode/
 *.swp

@@ -1,24 +1,50 @@
+version: '3.8'
+
 services:
-  # Book MCP Server avec FAISS intégré
-  book-mcp-server:
-    container_name: book-mcp-server
-    build: .
+  # Blood Test Reference API Service
+  bloodtest-api:
+    container_name: bloodtest-api
+    build:
+      context: .
+      target: builder  # Build using the builder stage
     ports:
       - "8000:8000"
     volumes:
-      - ./resources:/app/resources:ro  # Read-only pour les PDFs
-      - ./books:/app/books:ro          # Read-only pour la config
-      - ./faiss_index:/app/faiss_index # Read-write pour l'index
-      - ./utils:/app/utils:ro          # Code Python
-      - ./scripts:/app/scripts:ro      # Scripts
-      - ./server.py:/app/server.py:ro  # Server principal
+      - ./bloodtest_tools:/app/bloodtest_tools:ro  # Read-only for Python modules
+      - ./scripts:/app/scripts:ro                  # Read-only for scripts
+      - ./main.py:/app/main.py:ro                  # Main application entry point
+      - ./faiss_index:/app/faiss_index             # Read-write for FAISS index
+      - ./resources:/app/resources:ro              # Read-only for resources
+      - ./books:/app/books:ro                      # Read-only for book configs
     environment:
       - PYTHONUNBUFFERED=1
-      - ENV=PRODUCTION
-      - PDF_PATH=/app/resources/gtd.pdf  # Votre PDF
-      - INDEX_NAME=supplement-therapy
-      - INDEX_DIRECTORY=/app/faiss_index
-      - FORCE_REINDEX=false
-    # Initialise le RAG puis lance le serveur
-    command: sh -c "python scripts/init_rag.py && python server.py"
+      - PYTHONDONTWRITEBYTECODE=1
+      - ENV=${ENV:-PRODUCTION}
+      - HOST=0.0.0.0
+      - PORT=8000
+      # RAG-specific variables (if needed)
+      - PDF_PATH=${PDF_PATH:-/app/resources/gtd.pdf}
+      - INDEX_NAME=${INDEX_NAME:-supplement-therapy}
+      - INDEX_DIRECTORY=${INDEX_DIRECTORY:-/app/faiss_index}
+      - FORCE_REINDEX=${FORCE_REINDEX:-false}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
     restart: unless-stopped
+    command: sh -c "python scripts/init_rag.py && uvicorn bloodtest_tools.api:app --host $HOST --port $PORT --reload"
+
+  # Add any additional services like databases, caches, etc. here
+  # redis:
+  #   image: redis:alpine
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis_data:/data
+  #   restart: unless-stopped
+
+# Define volumes for persistent data
+# volumes:
+#   redis_data:
