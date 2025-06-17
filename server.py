@@ -90,15 +90,45 @@ class BookMCPServer(ABC):
     
     def _load_config(self, config_path: Path) -> BookKnowledgeConfig:
         """Loads the book configuration from YAML/JSON"""
-        self.logger.debug(f"Loading configuration from {config_path}")
+        self.logger.debug(f"Attempting to load configuration from {config_path}")
+        
+        # List of possible locations to try for the config file
+        possible_locations = [
+            config_path,  # Original path
+            Path("resources") / config_path.name,  # New resources directory
+            Path("app") / config_path,  # Docker container path
+            Path("/app") / config_path,  # Absolute Docker container path
+            Path("/app/resources") / config_path.name  # Resources in Docker
+        ]
+        
+        config_data = None
+        actual_path = None
+        
+        # Try each possible location
+        for path in possible_locations:
+            try:
+                self.logger.debug(f"Trying to load config from: {path}")
+                with open(path, 'r', encoding='utf-8') as f:
+                    if path.suffix == '.yaml' or path.suffix == '.yml':
+                        config_data = yaml.safe_load(f)
+                    else:
+                        config_data = json.load(f)
+                actual_path = path
+                self.logger.info(f"Configuration loaded successfully from: {path}")
+                break
+            except FileNotFoundError:
+                continue
+            except Exception as e:
+                self.logger.warning(f"Error loading config from {path}: {e}")
+                continue
+        
+        if config_data is None:
+            raise FileNotFoundError(
+                f"Could not find configuration file in any of these locations: {', '.join(str(p) for p in possible_locations)}"
+            )
+            
         try:
-            with open(config_path, 'r', encoding='utf-8') as f:
-                if config_path.suffix == '.yaml' or config_path.suffix == '.yml':
-                    data = yaml.safe_load(f)
-                else:
-                    data = json.load(f)
-            self.logger.info("Configuration loaded successfully.")
-            return BookKnowledgeConfig(**data)
+            return BookKnowledgeConfig(**config_data)
         except Exception as e:
             self.logger.error(f"Failed to load configuration: {e}")
             raise
