@@ -1,53 +1,42 @@
-# Python
+# Git
+.git
+.gitignore
+
+# Python virtual environment
+.venv/
+venv/
+env/
+ENV/
+
+# Python cache
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-env/
-venv/
-ENV/
-.venv/
 
-# IDE
-.vscode/
+# FAISS index files are included in the image
+
+# IDE/Editor specific
 .idea/
+.vscode/
 *.swp
 *.swo
 *~
 
-# OS
+# OS specific
 .DS_Store
 Thumbs.db
-
-# Project specific
-faiss_index/
-chroma_data/
-*.faiss
-*.pkl
-*.pdf
-!resources/*.pdf  # Autorise les PDFs dans resources/
-
-# Docker
-docker-compose*.yml
-Dockerfile*
-.dockerignore
-
-# Git
-.git/
-.gitignore
-.github/
-
-# Documentation
-docs/
-*.md
-!README.md
 
 # Tests
 tests/
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Railway config (not needed inside the container)
+railway.json
+
 
 # Build
 build/
@@ -59,6 +48,7 @@ dist/
 *.log
 *.bak
 *.tmp
+*.pdf
 node_modules/
 
 # Notebooks

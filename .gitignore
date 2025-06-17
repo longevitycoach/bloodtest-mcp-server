@@ -30,3 +30,7 @@ faiss_index/
 
 # PDFs
 scripts/pdfs/
+*.pdf
+
+# Claude Desktop Logs (copied locally for review)
+/Claude/

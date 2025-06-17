@@ -15,6 +15,84 @@ The server provides a health check endpoint at `/health` that returns the curren
 }
 ```
 
+## MCP Capabilities
+
+The MCP server provides several tools and workflows that can be accessed through the MCP protocol. Below is a comprehensive list of available capabilities:
+
+### Generic Tools
+
+1. **get_book_info**
+   - **Description**: Returns metadata about the currently loaded book and available workflows.
+   - **Returns**: JSON object containing book title, author, domain, description, available workflows, and RAG status.
+   - **Example Response**:
+     ```json
+     {
+       "title": "Der Blutwerte Coach, Naehrstoff-Therapie",
+       "author": "Author Name",
+       "domain": "Health and Nutrition",
+       "description": "Detailed book description",
+       "available_workflows": ["Supplement Therapy"],
+       "rag_enabled": true
+     }
+     ```
+
+2. **list_workflows**
+   - **Description**: Lists all available workflows with their names and descriptions.
+   - **Returns**: Array of workflow objects.
+   - **Example Response**:
+     ```json
+     [
+       {
+         "name": "Supplement Therapy",
+         "description": "Provides personalized supplement recommendations based on blood test results"
+       }
+     ]
+     ```
+
+### Workflow Tools
+
+Workflow tools are dynamically generated based on the configuration in `structure.yaml`. Each workflow becomes an MCP tool with a name derived from the workflow name (converted to snake_case).
+
+1. **supplement_therapy** (Example)
+   - **Description**: Executes the Supplement Therapy workflow.
+   - **Returns**: The final prompt or result of the workflow execution.
+   - **Note**: The actual workflow name and parameters depend on your `structure.yaml` configuration.
+
+### Advanced Tools
+
+1. **sequential_thinking**
+   - **Description**: Enables multi-step reasoning and thought processes for complex problem-solving.
+   - **Parameters**:
+     - `thought` (str): Current thinking step
+     - `thought_number` (int): Current thought number (1-based)
+     - `total_thoughts` (int): Estimated total thoughts needed
+     - `next_thought_needed` (bool): Whether another thought step is needed
+     - `is_revision` (bool, optional): Whether this revises previous thinking
+     - `revises_thought` (int, optional): Which thought is being reconsidered
+   - **Returns**: JSON response with thought processing status.
+
+2. **rag_search** (Available if RAG is enabled)
+   - **Description**: Performs retrieval-augmented generation search against the book's knowledge base.
+   - **Parameters**:
+     - `query` (str): The search query
+     - `k` (int, optional): Number of results to return (default: 5)
+   - **Returns**: Relevant passages from the knowledge base.
+
+### HTTP Endpoints
+
+1. **GET /health**
+   - **Description**: Health check endpoint
+   - **Response**: JSON with service status
+   - **Example**: `curl http://localhost:8000/health`
+
+2. **GET /sse**
+   - **Description**: Server-Sent Events (SSE) transport endpoint for MCP clients
+   - **Usage**: Used by MCP clients to establish a persistent connection
+
+### Authentication
+
+All MCP tools require proper authentication via the MCP protocol. Ensure your client is properly configured with valid credentials before making requests.
+
 ## Resource Directory Structure
 
 - `/resources/` - Contains all book resources and PDFs
@@ -110,7 +188,152 @@ The server will start (defaulting to `http://0.0.0.0:8000`), load the FAISS inde
 
 ## 2. Docker Setup
 
-Docker can simplify deployment by packaging the application and its dependencies.
+Docker can simplify deployment by packaging the application and its dependencies. The Docker image is pre-configured with all necessary dependencies and the FAISS index.
+
+### a. Prerequisites
+
+- Docker Engine
+- Docker Compose (optional, for `docker-compose` commands)
+
+### b. Building the Docker Image
+
+To build the optimized Docker image, run:
+
+```bash
+docker build -t bloodtest-mcp-server -f Dockerfile.optimized .
+```
+
+### c. Running the Docker Container
+
+To run the container with the built image:
+
+```bash
+docker run -d \
+  -p 8000:8000 \
+  --name bloodtest-mcp-server \
+  -e PORT=8000 \
+  -e ENV=DEV \
+  bloodtest-mcp-server
+```
+
+This will:
+1. Start the container in detached mode (`-d`)
+2. Map port 8000 on your host to port 8000 in the container
+3. Set the container name to `bloodtest-mcp-server`
+4. Set the port and environment variables
+5. Use the `bloodtest-mcp-server` image we built
+
+### d. Verifying the Deployment
+
+Once the container is running, you can verify the health check endpoint:
+
+```bash
+curl http://localhost:8000/health
+```
+
+You should see a response like:
+
+```json
+{
+  "status": "healthy",
+  "book": "Der Blutwerte Coach, Naehrstoff-Therapie",
+  "version": "1.0",
+  "rag_enabled": true
+}
+```
+
+### e. Stopping and Removing the Container
+
+To stop the container:
+
+```bash
+docker stop bloodtest-mcp-server
+```
+
+To remove the container (after stopping it):
+
+```bash
+docker rm bloodtest-mcp-server
+```
+
+### f. Viewing Logs
+
+To view the container logs:
+
+```bash
+docker logs bloodtest-mcp-server
+```
+
+For following the logs in real-time:
+
+```bash
+docker logs -f bloodtest-mcp-server
+```
+
+## 3. Troubleshooting
+
+### Common Issues and Solutions
+
+#### 1. Connection Reset When Accessing Endpoints
+
+**Symptom**: You see a "Connection reset by peer" error when trying to access the health check or other endpoints.
+
+**Solution**:
+- Ensure the container is running: `docker ps`
+- Check the container logs for errors: `docker logs bloodtest-mcp-server`
+- Verify the server is binding to `0.0.0.0` (not `127.0.0.1`) in the container
+- Make sure the port mapping is correct (e.g., `-p 8000:8000`)
+
+#### 2. Configuration File Not Found
+
+**Symptom**: Errors about missing `structure.yaml` or other configuration files.
+
+**Solution**:
+- Verify the file exists in the correct location (`/app/resources/structure.yaml` in the container)
+- Check file permissions: `docker exec -it bloodtest-mcp-server ls -la /app/resources/`
+- Ensure the file was included in the Docker build (check `.dockerignore`)
+
+#### 3. FAISS Index Loading Issues
+
+**Symptom**: Errors about missing or invalid FAISS index files.
+
+**Solution**:
+- Verify the FAISS index files exist in the container: `docker exec -it bloodtest-mcp-server ls -la /app/faiss_index/`
+- Check that the `index_name` in `structure.yaml` matches the FAISS index filename
+- Ensure the files have the correct permissions
+
+#### 4. Container Fails to Start
+
+**Symptom**: The container exits immediately after starting.
+
+**Solution**:
+- Check the logs: `docker logs bloodtest-mcp-server`
+- Try running interactively: `docker run -it --rm bloodtest-mcp-server /bin/bash`
+- Verify all required environment variables are set
+
+#### 5. Health Check Fails
+
+**Symptom**: The `/health` endpoint returns an error or is not accessible.
+
+**Solution**:
+- Check if the server is running: `docker ps`
+- Look for errors in the logs: `docker logs bloodtest-mcp-server`
+- Verify the port mapping is correct
+- Check if another service is using the same port
+
+### Getting Help
+
+If you encounter issues not covered here:
+
+1. Check the container logs: `docker logs bloodtest-mcp-server`
+2. Verify the container is running: `docker ps`
+3. Check for error messages in the logs
+4. Ensure all dependencies are installed and up to date
+5. Check file permissions and paths
+
+## 4. Docker Compose Setup (Alternative)
+
+For a more production-like setup, you can use Docker Compose:
 
 ### a. Docker Prerequisites
 

@@ -299,12 +299,24 @@ Strictly apply the book's methodology using the information provided.
 # =======================
 
 if __name__ == "__main__":
-
-    config_path = Path("books/structure.yaml")
+    # Try multiple possible locations for the config file
+    possible_config_paths = [
+        Path("resources/structure.yaml"),  # New location in resources directory
+        Path("books/structure.yaml"),     # Old location for backward compatibility
+        Path("app/resources/structure.yaml"),  # Common Docker path
+        Path("/app/resources/structure.yaml")  # Absolute Docker path
+    ]
+    
+    # Use the first config file that exists, or the first one as default
+    config_path = next((p for p in possible_config_paths if p.exists()), possible_config_paths[0])
+    print(f"Using config file: {config_path.absolute()}")
 
     mcp = BookMCPServer(config_path=config_path)
     
-    if os.environ.get("ENV") == "DEV":
-        mcp.run(host="127.0.0.1", port=8000, transport="sse")
-    else:
-        mcp.run(host="0.0.0.0", port=8000, transport="sse")
+    # Get host and port from environment variables or use defaults
+    # Always use 0.0.0.0 in container to allow external connections
+    host = os.environ.get("HOST", "0.0.0.0")
+    port = int(os.environ.get("PORT", 8000))
+    
+    print(f"Starting server on {host}:{port}")
+    mcp.run(host=host, port=port, transport="sse")
