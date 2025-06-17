@@ -234,9 +234,34 @@ Strictly apply the book's methodology using the information provided.
         self.logger.debug("Setting up system prompts.")
         pass
     
+    def _setup_health_check(self):
+        """Configures the health check endpoint"""
+        from starlette.responses import JSONResponse
+        from starlette.routing import Route
+        
+        async def health_check(request):
+            """Health check endpoint for monitoring"""
+            return JSONResponse({
+                "status": "healthy",
+                "book": self.config.book.title,
+                "version": self.config.book.version,
+                "rag_enabled": bool(self.rag_system)
+            })
+        
+        # Create a route for the health check
+        health_route = Route("/health", health_check, methods=["GET"])
+        
+        # Add the route to the FastMCP server's HTTP app
+        if not hasattr(self.mcp, '_additional_http_routes'):
+            self.mcp._additional_http_routes = []
+        self.mcp._additional_http_routes.append(health_route)
+        
+        self.logger.info("Health check endpoint configured at /health")
+    
     def run(self, **kwargs):
         """Starts the MCP server"""
         self.logger.info(f"Starting MCP server with args: {kwargs}")
+        self._setup_health_check()
         self.mcp.run(**kwargs)
 
 # =======================

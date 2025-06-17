@@ -2,10 +2,26 @@
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
     "builder": "DOCKERFILE",
-    "dockerfilePath": "Dockerfile"
+    "dockerfilePath": "Dockerfile.optimized"
   },
   "deploy": {
     "restartPolicyType": "ON_FAILURE",
-    "restartPolicyMaxRetries": 10
-  }
+    "restartPolicyMaxRetries": 10,
+    "startCommand": "python server.py --host 0.0.0.0 --port $PORT",
+    "healthcheckPath": "/health",
+    "healthcheckTimeout": 30
+  },
+  "routes": [
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "^/sse",
+      "dest": "/sse"
+    },
+    {
+      "src": "^/health",
+      "dest": "/health"
+    }
+  ]
 }
