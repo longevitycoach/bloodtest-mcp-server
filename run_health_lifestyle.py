@@ -35,12 +35,11 @@ def main():
     # Initialize and start the MCP server
     mcp = BookMCPServer(config_path=config_path)
     
-    # Get host and port from environment variables or use defaults
-    host = os.environ.get("HOST", "0.0.0.0")
-    port = int(os.environ.get("PORT", 8000))
-    
-    logger.info(f"Starting Health & Lifestyle MCP server on {host}:{port}")
-    mcp.run(host=host, port=port, log_level="info")
+    # FastMCP uses stdio transport by default, which doesn't require a port
+    # Remove the port configuration since it's not needed for stdio transport
+    logger.info("Starting Health & Lifestyle MCP server with stdio transport")
+    # Run the server with default transport (stdio)
+    mcp.run()
 
 if __name__ == "__main__":
     main()

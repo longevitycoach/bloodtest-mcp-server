@@ -165,20 +165,96 @@ Authorization: Bearer your_api_key_here
 
 ### Development Setup
 
-1. **Start the development server**
+1. **Clone the repository and set up the environment**
    ```bash
-   uvicorn main:app --reload
+   git clone <repository-url>
+   cd bloodtest-mcp-server
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install -r requirements.txt
    ```
 
-2. **Access the API docs**
-   - Swagger UI: http://localhost:8000/docs
-   - ReDoc: http://localhost:8000/redoc
+2. **Set up environment variables**
+   - Copy `.env.example` to `.env`
+   - Update the following variables in `.env`:
+     ```
+     # Environment
+     ENV=development
+     
+     # Sentry Configuration
+     SENTRY_DSN=your-sentry-dsn-here
+     SENTRY_ENVIRONMENT=development
+     SENTRY_TRACES_SAMPLE_RATE=1.0
+     SENTRY_PROFILES_SAMPLE_RATE=1.0
+     
+     # Application
+     APP_VERSION=1.0.0
+     PORT=8002  # Default port, change if needed
+     
+     # Logging
+     LOG_LEVEL=DEBUG
+     ```
+
+3. **Start the development server**
+   ```bash
+   # If using Docker (recommended)
+   docker-compose up --build
+   
+   # Or run directly
+   source venv/bin/activate
+   python main.py
+   ```
+
+4. **Access the API**
+   - API Base URL: http://localhost:8002
+   - Swagger UI: http://localhost:8002/docs
+   - ReDoc: http://localhost:8002/redoc
+   - Test Sentry Error: http://localhost:8002/test-error
+
+### Port Configuration
+
+- The default port is set to `8002` in the `.env` file to avoid conflicts with other services.
+- If you're running the server in Docker Desktop, make sure to stop any other containers that might be using the same port.
+- To change the port, update the `PORT` variable in the `.env` file.
+
+### Sentry Logging
+
+Sentry is configured for error tracking and performance monitoring. To test Sentry logging:
+
+1. Ensure your `SENTRY_DSN` is properly set in the `.env` file
+2. Access the test error endpoint: `GET /test-error`
+3. Check your Sentry dashboard for the error event
+
+### Troubleshooting
+
+#### Port Already in Use
+If you encounter a port conflict:
+```bash
+# Find the process using the port
+lsof -i :8002
+
+# Kill the process (replace PID with the actual process ID)
+kill -9 PID
+```
+
+#### Docker Port Conflicts
+If you're using Docker Desktop and experiencing port conflicts:
+1. Check running containers: `docker ps`
+2. Stop conflicting containers: `docker stop <container_id>`
+3. Or change the port mapping in `docker-compose.yml`
 
 ### Testing
 
 Run the test suite with:
 ```bash
+# Install test dependencies
+pip install -r requirements-test.txt
+
+# Run tests
 pytest tests/
+
+# Run with coverage report
+pytest --cov=bloodtest_tools --cov-report=html tests/
 ```
 
 ### Deployment

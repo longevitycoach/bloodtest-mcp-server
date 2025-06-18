@@ -2,34 +2,40 @@
 Main entry point for the Blood Test Reference Values API.
 """
 import os
-import sentry_sdk
-from sentry_sdk.integrations.fastapi import FastApiIntegration
-from sentry_sdk.integrations.starlette import StarletteIntegration
+import logging
+from dotenv import load_dotenv
 import uvicorn
 
-# Initialize Sentry SDK
-sentry_sdk.init(
-    dsn="https://6995265bd39205370b934ee1dc980c15@o4509519455191040.ingest.de.sentry.io/4509519471509584",
-    integrations=[
-        FastApiIntegration(),
-        StarletteIntegration(),
-    ],
-    # Set traces_sample_rate to 1.0 to capture 100%
-    # of transactions for performance monitoring.
-    traces_sample_rate=1.0,
-    # Set profiles_sample_rate to 1.0 to profile 100%
-    # of sampled transactions.
-    profiles_sample_rate=1.0,
-    environment=os.getenv("ENV", "development"),
-    send_default_pii=True,  # Add data like request headers and IP for users
-)
+# Load environment variables from .env file
+load_dotenv()
 
+# Configure logging
+logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"))
+logger = logging.getLogger(__name__)
+
+# Configure application monitoring
+def configure_monitoring():
+    """Initialize application monitoring (Sentry removed)."""
+    logger.info("Application monitoring is disabled (Sentry removed)")
+
+# Initialize monitoring
+configure_monitoring()
+
+# Import the FastAPI app
 from bloodtest_tools.api import app
 
 if __name__ == "__main__":
+    import uvicorn
+    
+    # Get port from environment variable or use default 8000
+    port = int(os.getenv("PORT", 8000))
+    
+    # Run the FastAPI app with uvicorn
     uvicorn.run(
-        app,
+        "bloodtest_tools.api:app",
         host="0.0.0.0",
-        port=int(os.getenv("PORT", "8001")),  # Default to 8001 if PORT env var not set
-        log_level="debug"
+        port=port,
+        reload=os.getenv("ENV") == "development",
+        log_level=os.getenv("LOG_LEVEL", "info").lower(),
+        workers=1 if os.getenv("ENV") == "development" else None
     )

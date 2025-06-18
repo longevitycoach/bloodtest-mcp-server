@@ -9,18 +9,28 @@ wheels/
 # Virtual environments
 .venv
 .venv-pyodide
+env/
+venv/
+ENV/
+
+# Environment variables
+.env
+.env.*
+!.env.example
 
 # Wrangler
 .wrangler
 
-#Pytest
+# Pytest
 .pytest_cache
+.coverage
+htmlcov/
 
 # Node modules
-node_modules
+node_modules/
 
 # Cursor 
-.windsurf
+.windsurf/
 
 # Archives
 archive/
@@ -28,6 +38,23 @@ archive/
 # PDFs
 scripts/pdfs/
 *.pdf
+
+# Local development
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+
+# Local development
+local_settings.py
+
+# Sentry
+sentry-debug.log
 
 # Claude Desktop Logs (copied locally for review)
 /Claude/
