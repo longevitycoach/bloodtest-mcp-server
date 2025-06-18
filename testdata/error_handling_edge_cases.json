@@ -62,7 +62,7 @@
               "name": "very_long_parameter_name",
               "request": {
                 "method": "GET",
-                "endpoint": "/reference/" + "a" * 1000,
+                "endpoint": "/reference/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
                 "expected_status": 404,
                 "expected_behavior": "graceful_handling"
               }
@@ -140,7 +140,7 @@
               "name": "extremely_long_query",
               "tool": "search_book_knowledge",
               "input": {
-                "query": "vitamin D " * 1000,
+                "query": "vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D vitamin D",
                 "k": 5
               },
               "expected_behavior": "query_truncation_or_error",

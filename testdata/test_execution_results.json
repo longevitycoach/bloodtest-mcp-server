@@ -1,0 +1,105 @@
+{
+  "test_execution_summary": {
+    "timestamp": "2025-06-18 14:28:39",
+    "total_execution_time_seconds": 0.02,
+    "total_tests": 21,
+    "tests_passed": 21,
+    "tests_failed": 0,
+    "success_rate_percentage": 100.0
+  },
+  "test_suite_results": {
+    "system_health_check": {
+      "tests": [
+        "TestResult(test_id='health_001', test_name='health_check_endpoint', status=<TestStatus.PASSED: 'passed'>, execution_time_ms=5.157947540283203, error_message=None, details={'response': {'status': 'healthy', 'book': 'Der Blutwerte Coach, Naehrstoff-Therapie', 'version': '1.0', 'rag_enabled': True, 'api_functional': True, 'blood_parameters_count': 8, 'api_endpoints': {'blood_test_parameters': '/parameters', 'blood_test_reference': '/reference/{parameter}', 'mcp_sse': '/sse'}}})"
+      ],
+      "summary": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0
+      }
+    },
+    "api_endpoint_tests": {
+      "tests": [
+        "TestResult(test_id='api_001', test_name='root_endpoint_basic', status=<TestStatus.PASSED: 'passed'>, execution_time_ms=1.0738372802734375, error_message=None, details={'response': {'name': 'Blood Test Reference Values API', 'version': '1.0.0', 'description': 'API for retrieving optimal blood test reference values based on medical guidelines.', 'endpoints': {'GET /parameters': 'List all available parameters', 'GET /reference/{parameter}': 'Get reference range for a specific parameter', 'GET /health': 'Health check endpoint', 'GET /sse': 'MCP Server-Sent Events endpoint (when MCP enabled)'}, 'blood_parameters_supported': 8, 'functional_medicine_ranges': True}})",
+        "TestResult(test_id='api_002', test_name='health_check_endpoint', status=<TestStatus.PASSED: 'passed'>, execution_time_ms=0.9720325469970703, error_message=None, details={'response': {'status': 'healthy', 'book': 'Der Blutwerte Coach, Naehrstoff-Therapie', 'version': '1.0', 'rag_enabled': True, 'api_functional': True, 'blood_parameters_count': 8, 'api_endpoints': {'blood_test_parameters': '/parameters', 'blood_test_reference': '/reference/{parameter}', 'mcp_sse': '/sse'}}})",
+        "TestResult(test_id='api_003', test_name='list_all_parameters', status=<TestStatus.PASSED: 'passed'>, execution_time_ms=0.7352828979492188, error_message=None, details={'response': {'parameters': [{'parameter': 'ferritin', 'unit': 'ng/ml'}, {'parameter': 'tsh', 'unit': 'mIU/l'}, {'parameter': 'vitamin_d', 'unit': 'ng/ml'}, {'parameter': 'vitamin_b12', 'unit': 'pmol/l'}, {'parameter': 'folate_rbc', 'unit': 'ng/ml'}, {'parameter': 'zinc', 'unit': 'mg/l'}, {'parameter': 'magnesium', 'unit': 'mmol/l'}, {'parameter': 'selenium', 'unit': '\u00b5g/l'}]}})",
+        "TestResult(test_id='api_004', test_name='ferritin_basic_lookup', status=<TestStatus.PASSED: 'passed'>, execution_time_ms=0.7741451263427734, error_message=None, details={'response': {'parameter': 'ferritin', 'unit': 'ng/ml', 'optimal_range': '70\u2013200 (optimal)', 'classical_range': '15-400 depending on sex and age', 'explanation': 'Iron storage protein; reflects total body iron stores. Low levels indicate iron deficiency before anemia develops. High levels may indicate inflammation, infection, or iron overload conditions.', 'sex_specific': True}})",
+        "TestResult(test_id='api_005', test_name='ferritin_female_specific', status=<TestStatus.PASSED: 'passed'>, execution_time_ms=0.6241798400878906, error_message=None, details={'response': {'parameter': 'ferritin', 'unit': 'ng/ml', 'optimal_range': '70\u2013200 (optimal)', 'classical_range': '15-400 depending on sex and age', 'explanation': 'Iron storage protein; reflects total body iron stores. Low levels indicate iron deficiency before anemia develops. High levels may indicate inflammation, infection, or iron overload conditions.', 'sex_specific': True, 'sex_specific_range': 'premenopausal: 15\u2013150, postmenopausal: 15\u2013300, optimal: 70\u2013200'}})",
+        "TestResult(test_id='api_006', test_name='ferritin_male_specific', status=<TestStatus.PASSED: 'passed'>, execution_time_ms=0.3991127014160156, error_message=None, details={'response': {'parameter': 'ferritin', 'unit': 'ng/ml', 'optimal_range': '70\u2013200 (optimal)', 'classical_range': '15-400 depending on sex and age', 'explanation': 'Iron storage protein; reflects total body iron stores. Low levels indicate iron deficiency before anemia develops. High levels may indicate inflammation, infection, or iron overload conditions.', 'sex_specific': True, 'sex_specific_range': '30\u2013400, optimal: 100\u2013300'}})",
+        "TestResult(test_id='api_007', test_name='vitamin_d_lookup', status=<TestStatus.PASSED: 'passed'>, execution_time_ms=0.4780292510986328, error_message=None, details={'response': {'parameter': 'vitamin_d', 'unit': 'ng/ml', 'optimal_range': '50\u201370', 'classical_range': '10\u2013100, optimal higher', 'explanation': 'Essential for calcium absorption, bone health, immune function, and gene expression. Influences over 2000 genes and has receptor sites in nearly every cell. Deficiency linked to numerous chronic diseases.', 'sex_specific': True}})",
+        "TestResult(test_id='api_008', test_name='tsh_lookup', status=<TestStatus.PASSED: 'passed'>, execution_time_ms=0.46515464782714844, error_message=None, details={'response': {'parameter': 'tsh', 'unit': 'mIU/l', 'optimal_range': '0.5\u20132.5', 'classical_range': '0.4\u20134.0, optimal 0.5\u20132.5', 'explanation': 'Thyroid-stimulating hormone. Optimal levels are lower than classical reference ranges. Higher levels may indicate subclinical hypothyroidism.', 'sex_specific': True}})",
+        "TestResult(test_id='api_009', test_name='vitamin_b12_lookup', status=<TestStatus.PASSED: 'passed'>, execution_time_ms=0.5831718444824219, error_message=None, details={'response': {'parameter': 'vitamin_b12', 'unit': 'pmol/l', 'optimal_range': '>100', 'classical_range': '37.5\u2013150', 'explanation': \"Critical for nerve function, DNA synthesis, and red blood cell formation. Functional deficiency can occur even with 'normal' levels; active B12 (holotranscobalamin) is more accurate.\", 'sex_specific': True}})",
+        "TestResult(test_id='api_010', test_name='folate_rbc_lookup', status=<TestStatus.PASSED: 'passed'>, execution_time_ms=0.5679130554199219, error_message=None, details={'response': {'parameter': 'folate_rbc', 'unit': 'ng/ml', 'optimal_range': '>16', 'classical_range': '4.5\u201320', 'explanation': 'Crucial for DNA synthesis, repair, and methylation. Works synergistically with B12. Important for cardiovascular health through homocysteine regulation.', 'sex_specific': True}})",
+        "TestResult(test_id='api_011', test_name='zinc_lookup', status=<TestStatus.PASSED: 'passed'>, execution_time_ms=0.5009174346923828, error_message=None, details={'response': {'parameter': 'zinc', 'unit': 'mg/l', 'optimal_range': '6\u20137', 'classical_range': '4.5\u20137.5', 'explanation': 'Essential for immune function, protein synthesis, wound healing, DNA synthesis, and cell division. Cofactor for over 300 enzymes. Serum levels may not reflect tissue status.', 'sex_specific': True}})",
+        "TestResult(test_id='api_012', test_name='magnesium_lookup', status=<TestStatus.PASSED: 'passed'>, execution_time_ms=0.5660057067871094, error_message=None, details={'response': {'parameter': 'magnesium', 'unit': 'mmol/l', 'optimal_range': '0.85\u20131.0', 'classical_range': '0.75\u20131.0', 'explanation': 'Required for over 600 enzymatic reactions. Critical for energy production, muscle function, nerve transmission, and bone formation. Serum levels represent only 1% of body magnesium.', 'sex_specific': True}})",
+        "TestResult(test_id='api_013', test_name='selenium_lookup', status=<TestStatus.PASSED: 'passed'>, execution_time_ms=0.4839897155761719, error_message=None, details={'response': {'parameter': 'selenium', 'unit': '\u00b5g/l', 'optimal_range': '140\u2013160', 'classical_range': '100\u2013140', 'explanation': 'Antioxidant mineral essential for thyroid hormone metabolism, immune function, and fertility. Component of glutathione peroxidase enzymes that protect against oxidative damage.', 'sex_specific': True}})",
+        "TestResult(test_id='api_error_001', test_name='invalid_parameter_404', status=<TestStatus.PASSED: 'passed'>, execution_time_ms=0.5128383636474609, error_message=None, details={'response': {'detail': \"Parameter 'invalid_parameter' not found in reference values\"}})",
+        "TestResult(test_id='api_error_002', test_name='invalid_sex_parameter', status=<TestStatus.PASSED: 'passed'>, execution_time_ms=0.5059242248535156, error_message=None, details={'response': {'detail': \"Invalid sex. Must be 'male' or 'female'.\"}})"
+      ],
+      "summary": {
+        "total": 15,
+        "passed": 15,
+        "failed": 0
+      }
+    },
+    "mcp_tool_tests": {
+      "tests": [
+        "TestResult(test_id='mcp_001', test_name='mcp_sse_endpoint', status=<TestStatus.PASSED: 'passed'>, execution_time_ms=0.4439353942871094, error_message=None, details={'response': {'message': 'MCP Server-Sent Events endpoint', 'description': 'This endpoint would normally handle MCP protocol connections', 'status': 'info_only', 'note': 'For full MCP functionality, use the integrated MCP server'}})"
+      ],
+      "summary": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0
+      }
+    },
+    "rag_system_tests": {
+      "tests": [
+        "TestResult(test_id='rag_001', test_name='rag_system_enabled', status=<TestStatus.PASSED: 'passed'>, execution_time_ms=100, error_message=None, details={'rag_enabled': True})"
+      ],
+      "summary": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0
+      }
+    },
+    "workflow_tests": {
+      "tests": [
+        "TestResult(test_id='workflow_001', test_name='workflow_structure_validation', status=<TestStatus.PASSED: 'passed'>, execution_time_ms=200, error_message=None, details={'workflow_files_present': True})"
+      ],
+      "summary": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0
+      }
+    },
+    "integration_tests": {
+      "tests": [
+        "TestResult(test_id='integration_001', test_name='api_health_coordination', status=<TestStatus.PASSED: 'passed'>, execution_time_ms=0.40602684020996094, error_message=None, details={'response': {'name': 'Blood Test Reference Values API', 'version': '1.0.0', 'description': 'API for retrieving optimal blood test reference values based on medical guidelines.', 'endpoints': {'GET /parameters': 'List all available parameters', 'GET /reference/{parameter}': 'Get reference range for a specific parameter', 'GET /health': 'Health check endpoint', 'GET /sse': 'MCP Server-Sent Events endpoint (when MCP enabled)'}, 'blood_parameters_supported': 8, 'functional_medicine_ranges': True}})"
+      ],
+      "summary": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0
+      }
+    },
+    "performance_tests": {
+      "tests": [
+        "TestResult(test_id='perf_001', test_name='health_endpoint_response_time', status=<TestStatus.PASSED: 'passed'>, execution_time_ms=0.4951953887939453, error_message=None, details={'response_time_ms': 0.4951953887939453, 'threshold_ms': 1000})"
+      ],
+      "summary": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0
+      }
+    }
+  },
+  "recommendations": [
+    "System performing well - consider adding more comprehensive tests"
+  ],
+  "system_capabilities_validated": {
+    "api_endpoints": true,
+    "health_monitoring": true,
+    "error_handling": true,
+    "performance_acceptable": true
+  }
+}

@@ -26,7 +26,7 @@ class ValidationResult:
 class TestDataValidator:
     """Validates test data files for the Bloodtest MCP Server"""
     
-    def __init__(self, testdata_dir: Path = Path("testdata")):
+    def __init__(self, testdata_dir: Path = Path(".")):
         self.testdata_dir = testdata_dir
         self.validation_results: List[ValidationResult] = []
         
@@ -532,7 +532,7 @@ def main():
         print(f"   • {rec}")
     
     # Save detailed results
-    results_file = Path("testdata/validation_results.json")
+    results_file = Path("validation_results.json")
     with open(results_file, 'w') as f:
         json.dump(results, f, indent=2)
     print(f"\n📄 Detailed validation results saved to: {results_file}")

@@ -20,13 +20,10 @@ wheels/
 node_modules
 
 # Cursor 
-.cursor
+.windsurf
 
 # Archives
 archive/
-
-# Faiss
-faiss_index/
 
 # PDFs
 scripts/pdfs/

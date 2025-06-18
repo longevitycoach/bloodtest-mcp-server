@@ -2,6 +2,23 @@
 # BASE FRAMEWORK
 # =======================
 
+import os
+import sentry_sdk
+from sentry_sdk.integrations.logging import LoggingIntegration
+
+# Initialize Sentry SDK for MCP server
+sentry_logging = LoggingIntegration(
+    level=logging.INFO,        # Capture info and above as breadcrumbs
+    event_level=logging.ERROR  # Send errors as events
+)
+
+sentry_sdk.init(
+    dsn=os.getenv("SENTRY_DSN", "https://6995265bd39205370b934ee1dc980c15@o4509519455191040.ingest.de.sentry.io/4509519471509584"),
+    integrations=[sentry_logging],
+    traces_sample_rate=1.0,
+    environment=os.getenv("ENV", "development"),
+)
+
 from fastmcp import FastMCP
 from pydantic import BaseModel, Field
 from typing import Dict, List, Any, Optional, Callable
@@ -10,7 +27,6 @@ import json
 import yaml
 from pathlib import Path
 import logging
-import os
 
 # Import the sequential thinking tool
 from utils.sequential_thinking import setup_sequential_thinking_tool

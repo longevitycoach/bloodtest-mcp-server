@@ -46,7 +46,7 @@ class BloodtestMCPTester:
         self.session: Optional[aiohttp.ClientSession] = None
         
         # Load all test configurations
-        self.test_data_dir = Path("testdata")
+        self.test_data_dir = Path(".")
         self.test_configs = self._load_test_configurations()
         
     def _load_test_configurations(self) -> Dict[str, Any]:
@@ -474,7 +474,7 @@ async def main():
             print(f"   • {rec}")
         
         # Save detailed results
-        results_file = Path("testdata/test_execution_results.json")
+        results_file = Path("test_execution_results.json")
         with open(results_file, 'w') as f:
             json.dump(results, f, indent=2, default=str)
         print(f"\n📄 Detailed results saved to: {results_file}")
