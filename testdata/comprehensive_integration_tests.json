@@ -1,0 +1,374 @@
+{
+  "integration_tests": {
+    "description": "Comprehensive integration tests for the complete Bloodtest MCP Server system",
+    "test_categories": {
+      "system_integration": [
+        {
+          "test_id": "integration_001",
+          "name": "complete_system_startup",
+          "description": "Test full system initialization and readiness",
+          "test_steps": [
+            {
+              "step": 1,
+              "action": "server_startup",
+              "endpoint": "http://localhost:8000/health",
+              "expected_response": {
+                "status": "healthy",
+                "rag_enabled": true,
+                "book": "Der Blutwerte Coach, Naehrstoff-Therapie"
+              }
+            },
+            {
+              "step": 2,
+              "action": "sse_connection_test",
+              "endpoint": "http://localhost:8000/sse",
+              "expected_behavior": "successful_mcp_connection"
+            },
+            {
+              "step": 3,
+              "action": "rag_system_verification",
+              "mcp_tool": "search_book_knowledge",
+              "test_query": "vitamin D",
+              "expected_result": "successful_knowledge_retrieval"
+            },
+            {
+              "step": 4,
+              "action": "api_endpoints_verification",
+              "endpoints": ["/", "/parameters", "/reference/ferritin"],
+              "expected_behavior": "all_endpoints_responsive"
+            }
+          ],
+          "success_criteria": [
+            "all_services_healthy",
+            "rag_system_operational",
+            "api_endpoints_functional",
+            "mcp_connection_stable"
+          ]
+        }
+      ],
+      "cross_component_integration": [
+        {
+          "test_id": "integration_002", 
+          "name": "api_mcp_coordination",
+          "description": "Test coordination between REST API and MCP tools",
+          "scenario": "Use API to get reference values, then MCP tools for personalized recommendations",
+          "test_sequence": [
+            {
+              "action": "api_reference_lookup",
+              "method": "GET",
+              "endpoint": "/reference/ferritin?sex=female",
+              "capture_data": "ferritin_reference_ranges"
+            },
+            {
+              "action": "mcp_knowledge_search",
+              "tool": "search_book_knowledge", 
+              "query": "ferritin deficiency women supplementation",
+              "use_api_data": "enhance_search_context"
+            },
+            {
+              "action": "mcp_recommendation_generation",
+              "tool": "supplement_therapy",
+              "input_context": "combine_api_and_rag_data",
+              "expected_output": "integrated_recommendation_plan"
+            }
+          ],
+          "validation": [
+            "api_data_correctly_used",
+            "rag_knowledge_integrated",
+            "recommendations_consistent",
+            "no_data_conflicts"
+          ]
+        },
+        {
+          "test_id": "integration_003",
+          "name": "multi_tool_workflow_coordination", 
+          "description": "Test complex workflow using multiple MCP tools in sequence",
+          "patient_simulation": {
+            "blood_values": {
+              "ferritin": 15,
+              "vitamin_d": 25,
+              "magnesium": 0.76
+            },
+            "symptoms": ["fatigue", "muscle_cramps", "poor_sleep"]
+          },
+          "tool_sequence": [
+            {
+              "tool": "sequential_thinking",
+              "purpose": "analyze_complex_deficiencies",
+              "input": "Multiple deficiencies with overlapping symptoms need prioritization"
+            },
+            {
+              "tool": "search_book_knowledge",
+              "purpose": "research_ferritin_fatigue",
+              "query": "ferritin deficiency fatigue energy levels"
+            },
+            {
+              "tool": "search_book_knowledge", 
+              "purpose": "research_magnesium_sleep",
+              "query": "magnesium deficiency sleep muscle cramps"
+            },
+            {
+              "tool": "sequential_thinking",
+              "purpose": "synthesize_findings",
+              "input": "Based on research, create prioritized supplement protocol"
+            },
+            {
+              "tool": "supplement_therapy",
+              "purpose": "generate_final_plan",
+              "context": "use_all_previous_findings"
+            }
+          ],
+          "success_criteria": [
+            "logical_tool_progression",
+            "context_maintained_across_tools",
+            "evidence_based_prioritization",
+            "coherent_final_recommendations"
+          ]
+        }
+      ],
+      "data_flow_tests": [
+        {
+          "test_id": "integration_004",
+          "name": "blood_test_file_processing",
+          "description": "Test complete flow from file upload to personalized recommendations",
+          "test_file": "testdata/CityPraxisOst Blutbild 2025.01-open.pdf",
+          "processing_steps": [
+            {
+              "step": "file_upload_simulation",
+              "expected_behavior": "successful_file_acceptance"
+            },
+            {
+              "step": "parameter_extraction",
+              "expected_parameters": ["ferritin", "vitamin_d", "tsh", "magnesium"],
+              "validation": "accurate_value_extraction"
+            },
+            {
+              "step": "reference_comparison",
+              "use_api": "/reference/{parameter}",
+              "expected_behavior": "optimal_vs_lab_range_comparison"
+            },
+            {
+              "step": "knowledge_integration",
+              "use_rag": "search_book_knowledge",
+              "context": "extracted_blood_values",
+              "expected_behavior": "relevant_knowledge_retrieval"
+            },
+            {
+              "step": "personalized_plan_generation",
+              "use_workflow": "supplement_therapy",
+              "expected_output": "complete_supplement_protocol"
+            }
+          ],
+          "validation_points": [
+            "file_correctly_processed",
+            "values_accurately_extracted",
+            "references_properly_applied",
+            "knowledge_contextually_relevant",
+            "plan_appropriately_personalized"
+          ]
+        }
+      ],
+      "error_handling_integration": [
+        {
+          "test_id": "integration_005",
+          "name": "cascading_error_handling",
+          "description": "Test system behavior when multiple components experience issues",
+          "error_scenarios": [
+            {
+              "scenario": "rag_system_failure",
+              "simulated_failure": "faiss_index_unavailable",
+              "expected_behavior": "fallback_to_api_only_recommendations",
+              "recovery_strategy": "graceful_degradation"
+            },
+            {
+              "scenario": "api_endpoint_failure", 
+              "simulated_failure": "reference_values_unavailable",
+              "expected_behavior": "use_hardcoded_backup_ranges",
+              "error_message": "clear_user_communication"
+            },
+            {
+              "scenario": "sequential_thinking_overload",
+              "simulated_failure": "thinking_steps_exceed_limit",
+              "expected_behavior": "truncate_safely_with_summary",
+              "safety_measure": "prevent_infinite_loops"
+            }
+          ],
+          "system_resilience_requirements": [
+            "no_complete_system_failure",
+            "clear_error_communication",
+            "functional_fallback_available",
+            "user_guidance_provided"
+          ]
+        }
+      ],
+      "performance_integration": [
+        {
+          "test_id": "integration_006",
+          "name": "concurrent_user_simulation",
+          "description": "Test system performance under realistic load",
+          "load_simulation": {
+            "concurrent_users": 10,
+            "session_duration_minutes": 5,
+            "actions_per_user": [
+              "health_check",
+              "parameter_lookup", 
+              "workflow_execution",
+              "rag_search",
+              "sequential_thinking"
+            ]
+          },
+          "performance_requirements": {
+            "max_response_time_ms": 3000,
+            "success_rate_percentage": 95,
+            "memory_usage_mb": 1000,
+            "cpu_usage_percentage": 80
+          },
+          "monitoring_points": [
+            "response_time_distribution",
+            "error_rate_tracking",
+            "resource_utilization",
+            "queue_length_monitoring"
+          ]
+        },
+        {
+          "test_id": "integration_007",
+          "name": "large_file_processing",
+          "description": "Test system handling of large blood test reports",
+          "test_files": [
+            {
+              "type": "large_pdf",
+              "size_mb": 5,
+              "pages": 20,
+              "expected_processing_time_seconds": 30
+            },
+            {
+              "type": "multiple_patient_report",
+              "patients": 5,
+              "expected_behavior": "individual_patient_isolation"
+            }
+          ],
+          "resource_limits": {
+            "max_memory_increase_mb": 200,
+            "max_processing_time_seconds": 60,
+            "successful_extraction_rate": 90
+          }
+        }
+      ],
+      "security_integration": [
+        {
+          "test_id": "integration_008",
+          "name": "data_privacy_compliance",
+          "description": "Test handling of sensitive health information",
+          "privacy_requirements": [
+            {
+              "requirement": "no_data_logging",
+              "test": "verify_blood_values_not_in_logs",
+              "validation": "log_file_analysis"
+            },
+            {
+              "requirement": "secure_transmission",
+              "test": "verify_https_only_communication",
+              "validation": "network_traffic_analysis"
+            },
+            {
+              "requirement": "memory_cleanup",
+              "test": "verify_sensitive_data_cleared",
+              "validation": "memory_dump_analysis"
+            }
+          ],
+          "compliance_checks": [
+            "gdpr_data_minimization",
+            "hipaa_security_safeguards",
+            "data_retention_policies"
+          ]
+        }
+      ]
+    },
+    "end_to_end_scenarios": [
+      {
+        "test_id": "e2e_001",
+        "name": "complete_patient_journey",
+        "description": "Full patient journey from initial contact to follow-up recommendations",
+        "journey_stages": [
+          {
+            "stage": "initial_contact",
+            "actions": ["system_health_check", "capabilities_overview"],
+            "tools": ["get_book_info", "list_workflows"]
+          },
+          {
+            "stage": "health_assessment",
+            "actions": ["symptom_analysis", "blood_test_upload"],
+            "tools": ["sequential_thinking", "file_processing"]
+          },
+          {
+            "stage": "knowledge_research", 
+            "actions": ["deficiency_research", "supplement_research"],
+            "tools": ["search_book_knowledge", "api_reference_lookup"]
+          },
+          {
+            "stage": "plan_generation",
+            "actions": ["personalized_recommendations", "safety_guidance"],
+            "tools": ["supplement_therapy", "sequential_thinking"]
+          },
+          {
+            "stage": "follow_up_planning",
+            "actions": ["monitoring_schedule", "progress_tracking"],
+            "tools": ["knowledge_search", "plan_refinement"]
+          }
+        ],
+        "success_metrics": [
+          "complete_journey_success_rate > 90%",
+          "average_session_time < 10_minutes",
+          "user_satisfaction_score > 4.5/5",
+          "recommendation_safety_score = 100%"
+        ]
+      }
+    ],
+    "regression_test_suite": [
+      {
+        "test_id": "regression_001",
+        "name": "core_functionality_regression",
+        "description": "Ensure all core features remain functional after updates",
+        "critical_functions": [
+          "api_parameter_lookup",
+          "rag_knowledge_search",
+          "workflow_execution", 
+          "sequential_thinking",
+          "health_check_endpoint"
+        ],
+        "test_frequency": "after_every_deployment",
+        "failure_tolerance": "zero_tolerance"
+      },
+      {
+        "test_id": "regression_002",
+        "name": "performance_regression",
+        "description": "Monitor for performance degradation over time",
+        "performance_baselines": {
+          "api_response_time_ms": 200,
+          "rag_search_time_ms": 1500,
+          "workflow_execution_time_ms": 5000
+        },
+        "degradation_threshold": "20%_increase",
+        "monitoring_period": "continuous"
+      }
+    ],
+    "validation_framework": {
+      "automated_testing": {
+        "test_execution_schedule": "daily",
+        "test_environments": ["development", "staging", "production"],
+        "reporting": "automated_test_reports_with_metrics"
+      },
+      "manual_testing": {
+        "test_frequency": "weekly", 
+        "focus_areas": ["user_experience", "medical_accuracy", "safety_compliance"],
+        "reviewer_qualifications": "medical_or_nutrition_background_preferred"
+      },
+      "success_criteria": {
+        "automated_test_pass_rate": 95,
+        "manual_review_approval_rate": 90,
+        "user_acceptance_rate": 85,
+        "zero_critical_safety_issues": true
+      }
+    }
+  }
+}

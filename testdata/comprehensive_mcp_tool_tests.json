@@ -1,0 +1,326 @@
+{
+  "mcp_tool_tests": {
+    "description": "Comprehensive tests for all MCP protocol tools and workflows",
+    "connection_config": {
+      "transport": "sse",
+      "base_url": "http://localhost:8000/sse",
+      "timeout_seconds": 30
+    },
+    "test_categories": {
+      "basic_tools": [
+        {
+          "test_id": "mcp_001",
+          "tool_name": "get_book_info",
+          "description": "Test basic book information retrieval",
+          "input_parameters": {},
+          "expected_output": {
+            "title": "Der Blutwerte Coach, Naehrstoff-Therapie",
+            "author": "Thiemo Osterhaus, Helene Osterhaus-Boekel",
+            "domain": "Longevity Health",
+            "description": "Naehrstoff-Therapie",
+            "available_workflows": ["Supplement Therapy"],
+            "rag_enabled": true
+          },
+          "validation_rules": [
+            "title_not_empty",
+            "author_not_empty", 
+            "workflows_array_not_empty",
+            "rag_enabled_boolean"
+          ]
+        },
+        {
+          "test_id": "mcp_002",
+          "tool_name": "list_workflows",
+          "description": "Test workflow listing functionality", 
+          "input_parameters": {},
+          "expected_output": [
+            {
+              "name": "Supplement Therapy",
+              "description": "Collect all blood values and provide a personalized supplement therapy plan"
+            }
+          ],
+          "validation_rules": [
+            "array_not_empty",
+            "contains_supplement_therapy",
+            "each_workflow_has_name_and_description"
+          ]
+        }
+      ],
+      "workflow_tools": [
+        {
+          "test_id": "mcp_003",
+          "tool_name": "supplement_therapy",
+          "description": "Test supplement therapy workflow with minimal input",
+          "input_parameters": {},
+          "expected_output_type": "string",
+          "expected_content_contains": [
+            "ROLE",
+            "INPUT_NEEDED", 
+            "Personal Health Profile",
+            "Blood Test Results",
+            "Lifestyle and Diet",
+            "Health Goals and Symptoms",
+            "PROCESS",
+            "Phase 1: Comprehensive Health Assessment",
+            "search_book_knowledge"
+          ],
+          "validation_rules": [
+            "output_is_string",
+            "contains_workflow_structure",
+            "contains_rag_tool_instructions"
+          ]
+        }
+      ],
+      "advanced_tools": [
+        {
+          "test_id": "mcp_004", 
+          "tool_name": "sequential_thinking",
+          "description": "Test sequential thinking for complex health analysis",
+          "input_parameters": {
+            "thought": "I need to analyze a complex blood test result with multiple deficiencies",
+            "thought_number": 1,
+            "total_thoughts": 3,
+            "next_thought_needed": true
+          },
+          "expected_output_type": "object",
+          "validation_rules": [
+            "contains_thought_processing",
+            "thought_number_matches_input",
+            "next_thought_indicated"
+          ]
+        },
+        {
+          "test_id": "mcp_005",
+          "tool_name": "sequential_thinking", 
+          "description": "Test multi-step thinking continuation",
+          "input_parameters": {
+            "thought": "Based on the low ferritin and vitamin D, I should consider iron absorption factors and sun exposure",
+            "thought_number": 2, 
+            "total_thoughts": 3,
+            "next_thought_needed": true
+          },
+          "expected_output_type": "object",
+          "validation_rules": [
+            "thought_progression_logical",
+            "maintains_context"
+          ]
+        },
+        {
+          "test_id": "mcp_006",
+          "tool_name": "sequential_thinking",
+          "description": "Test final thinking step completion",
+          "input_parameters": {
+            "thought": "The personalized supplement plan should prioritize iron and vitamin D with specific timing and forms",
+            "thought_number": 3,
+            "total_thoughts": 3, 
+            "next_thought_needed": false
+          },
+          "expected_output_type": "object",
+          "validation_rules": [
+            "final_thought_conclusive",
+            "no_next_thought_needed"
+          ]
+        }
+      ],
+      "rag_search_tools": [
+        {
+          "test_id": "mcp_007",
+          "tool_name": "search_book_knowledge",
+          "description": "Test RAG search for ferritin information",
+          "input_parameters": {
+            "query": "optimal ferritin levels for women",
+            "k": 5
+          },
+          "expected_output_type": "array",
+          "validation_rules": [
+            "results_not_empty", 
+            "contains_ferritin_information",
+            "max_5_results",
+            "each_result_has_content"
+          ],
+          "expected_content_themes": [
+            "ferritin",
+            "iron storage",
+            "women",
+            "optimal range"
+          ]
+        },
+        {
+          "test_id": "mcp_008",
+          "tool_name": "search_book_knowledge",
+          "description": "Test RAG search for vitamin D synthesis",
+          "input_parameters": {
+            "query": "vitamin D deficiency symptoms and supplementation",
+            "k": 3
+          },
+          "expected_output_type": "array", 
+          "validation_rules": [
+            "results_not_empty",
+            "max_3_results",
+            "contains_vitamin_d_info"
+          ],
+          "expected_content_themes": [
+            "vitamin D",
+            "deficiency",
+            "symptoms",
+            "supplementation"
+          ]
+        },
+        {
+          "test_id": "mcp_009",
+          "tool_name": "search_book_knowledge",
+          "description": "Test RAG search for magnesium absorption",
+          "input_parameters": {
+            "query": "magnesium glycinate vs citrate absorption sleep",
+            "k": 4
+          },
+          "expected_output_type": "array",
+          "validation_rules": [
+            "results_not_empty",
+            "contains_magnesium_forms",
+            "mentions_absorption_differences"
+          ],
+          "expected_content_themes": [
+            "magnesium",
+            "glycinate", 
+            "citrate",
+            "absorption",
+            "sleep"
+          ]
+        },
+        {
+          "test_id": "mcp_010",
+          "tool_name": "search_book_knowledge",
+          "description": "Test RAG search for thyroid optimization",
+          "input_parameters": {
+            "query": "TSH optimal range thyroid function selenium zinc",
+            "k": 5
+          },
+          "expected_output_type": "array",
+          "validation_rules": [
+            "results_not_empty",
+            "contains_thyroid_info",
+            "mentions_cofactors"
+          ],
+          "expected_content_themes": [
+            "TSH",
+            "thyroid",
+            "selenium",
+            "zinc",
+            "optimal"
+          ]
+        }
+      ]
+    },
+    "integration_scenarios": [
+      {
+        "test_id": "mcp_integration_001",
+        "name": "complete_health_assessment_workflow",
+        "description": "Test complete health assessment using multiple tools",
+        "test_steps": [
+          {
+            "step": 1,
+            "tool": "get_book_info",
+            "purpose": "Verify system is ready",
+            "parameters": {}
+          },
+          {
+            "step": 2, 
+            "tool": "sequential_thinking",
+            "purpose": "Plan assessment approach",
+            "parameters": {
+              "thought": "I need to gather comprehensive health data to provide optimal supplement recommendations",
+              "thought_number": 1,
+              "total_thoughts": 4,
+              "next_thought_needed": true
+            }
+          },
+          {
+            "step": 3,
+            "tool": "search_book_knowledge", 
+            "purpose": "Research assessment methodology",
+            "parameters": {
+              "query": "comprehensive blood test assessment methodology optimal ranges",
+              "k": 3
+            }
+          },
+          {
+            "step": 4,
+            "tool": "supplement_therapy",
+            "purpose": "Execute main workflow",
+            "parameters": {}
+          }
+        ],
+        "success_criteria": [
+          "all_steps_complete_successfully",
+          "knowledge_base_accessed",
+          "workflow_prompt_generated",
+          "contains_assessment_structure"
+        ]
+      }
+    ],
+    "error_handling_tests": [
+      {
+        "test_id": "mcp_error_001",
+        "tool_name": "search_book_knowledge",
+        "description": "Test RAG search with empty query",
+        "input_parameters": {
+          "query": "",
+          "k": 5
+        },
+        "expected_behavior": "graceful_error_handling",
+        "expected_error_type": "invalid_input"
+      },
+      {
+        "test_id": "mcp_error_002",
+        "tool_name": "sequential_thinking",
+        "description": "Test thinking with invalid thought number",
+        "input_parameters": {
+          "thought": "test thought",
+          "thought_number": 0,
+          "total_thoughts": 3,
+          "next_thought_needed": true
+        },
+        "expected_behavior": "validation_error",
+        "expected_error_type": "invalid_parameter"
+      },
+      {
+        "test_id": "mcp_error_003", 
+        "tool_name": "search_book_knowledge",
+        "description": "Test RAG search with very large k value",
+        "input_parameters": {
+          "query": "vitamin D",
+          "k": 1000
+        },
+        "expected_behavior": "parameter_limiting",
+        "expected_max_results": 100
+      }
+    ],
+    "performance_tests": [
+      {
+        "test_id": "mcp_perf_001",
+        "name": "rag_search_response_time",
+        "tool_name": "search_book_knowledge",
+        "description": "Test RAG search performance",
+        "input_parameters": {
+          "query": "comprehensive nutrient deficiency analysis",
+          "k": 5
+        },
+        "performance_requirements": {
+          "max_response_time_ms": 2000,
+          "min_relevance_score": 0.7
+        }
+      },
+      {
+        "test_id": "mcp_perf_002",
+        "name": "workflow_generation_speed",
+        "tool_name": "supplement_therapy", 
+        "description": "Test workflow prompt generation speed",
+        "input_parameters": {},
+        "performance_requirements": {
+          "max_response_time_ms": 500
+        }
+      }
+    ]
+  }
+}

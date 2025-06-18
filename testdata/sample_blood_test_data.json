@@ -1,0 +1,260 @@
+{
+  "sample_blood_test_data": {
+    "description": "Realistic blood test data samples in various formats for testing file processing capabilities",
+    "test_data_formats": {
+      "german_lab_reports": [
+        {
+          "sample_id": "lab_001",
+          "lab_name": "Labor Berlin",
+          "patient_demographics": {
+            "age": 28,
+            "sex": "weiblich",
+            "patient_id": "anonymized"
+          },
+          "test_date": "15.01.2025",
+          "raw_text_format": {
+            "ferritin": "Ferritin: 18 ng/ml (Referenzbereich: 15-150)",
+            "vitamin_d": "25-OH Vitamin D: 22 ng/ml (Referenzbereich: 30-100)",
+            "tsh": "TSH: 3,2 mIU/l (Referenzbereich: 0,27-4,20)",
+            "b12": "Vitamin B12: 245 pmol/l (Referenzbereich: 180-914)",
+            "folsaeure": "Folsäure i.E.: 8,5 ng/ml (Referenzbereich: 4,5-20)",
+            "magnesium": "Magnesium: 0,78 mmol/l (Referenzbereich: 0,75-1,0)",
+            "zink": "Zink: 4,8 mg/l (Referenzbereich: 4,5-7,5)",
+            "selen": "Selen: 95 µg/l (Referenzbereich: 100-140)"
+          },
+          "structured_format": [
+            {"parameter": "ferritin", "value": 18, "unit": "ng/ml", "reference": "15-150", "status": "low_normal"},
+            {"parameter": "vitamin_d", "value": 22, "unit": "ng/ml", "reference": "30-100", "status": "deficient"},
+            {"parameter": "tsh", "value": 3.2, "unit": "mIU/l", "reference": "0.27-4.20", "status": "high_normal"},
+            {"parameter": "vitamin_b12", "value": 245, "unit": "pmol/l", "reference": "180-914", "status": "low_normal"},
+            {"parameter": "folate_rbc", "value": 8.5, "unit": "ng/ml", "reference": "4.5-20", "status": "low_normal"},
+            {"parameter": "magnesium", "value": 0.78, "unit": "mmol/l", "reference": "0.75-1.0", "status": "low_normal"},
+            {"parameter": "zinc", "value": 4.8, "unit": "mg/l", "reference": "4.5-7.5", "status": "low_normal"},
+            {"parameter": "selenium", "value": 95, "unit": "µg/l", "reference": "100-140", "status": "deficient"}
+          ]
+        },
+        {
+          "sample_id": "lab_002", 
+          "lab_name": "Labor München",
+          "patient_demographics": {
+            "age": 35,
+            "sex": "männlich",
+            "patient_id": "anonymized"
+          },
+          "test_date": "20.01.2025",
+          "raw_text_format": {
+            "ferritin": "Ferritin: 145 ng/ml (Referenzbereich männlich: 30-400)",
+            "vitamin_d": "25-OH-Vitamin D3: 35 ng/ml (Referenzbereich: 30-100)",
+            "tsh": "TSH basal: 1,8 mIU/l (Referenzbereich: 0,27-4,20)",
+            "b12": "Cobalamin (B12): 387 pmol/l (Referenzbereich: 180-914)",
+            "folsaeure": "Folsäure (RBC): 18,2 ng/ml (Referenzbereich: 4,5-20)",
+            "magnesium": "Magnesium Vollblut: 0,82 mmol/l (Referenzbereich: 0,75-1,0)",
+            "zink": "Zink Serum: 5,5 mg/l (Referenzbereich: 4,5-7,5)",
+            "selen": "Selen Plasma: 125 µg/l (Referenzbereich: 100-140)"
+          },
+          "structured_format": [
+            {"parameter": "ferritin", "value": 145, "unit": "ng/ml", "reference": "30-400", "status": "normal"},
+            {"parameter": "vitamin_d", "value": 35, "unit": "ng/ml", "reference": "30-100", "status": "low_normal"},
+            {"parameter": "tsh", "value": 1.8, "unit": "mIU/l", "reference": "0.27-4.20", "status": "optimal"},
+            {"parameter": "vitamin_b12", "value": 387, "unit": "pmol/l", "reference": "180-914", "status": "normal"},
+            {"parameter": "folate_rbc", "value": 18.2, "unit": "ng/ml", "reference": "4.5-20", "status": "optimal"},
+            {"parameter": "magnesium", "value": 0.82, "unit": "mmol/l", "reference": "0.75-1.0", "status": "borderline"},
+            {"parameter": "zinc", "value": 5.5, "unit": "mg/l", "reference": "4.5-7.5", "status": "low_normal"},
+            {"parameter": "selenium", "value": 125, "unit": "µg/l", "reference": "100-140", "status": "normal"}
+          ]
+        },
+        {
+          "sample_id": "lab_003",
+          "lab_name": "Labor Hamburg",
+          "patient_demographics": {
+            "age": 54,
+            "sex": "weiblich",
+            "patient_id": "anonymized"
+          },
+          "test_date": "25.01.2025",
+          "raw_text_format": {
+            "ferritin": "Ferritin: 185 ng/ml (Referenzbereich postmenopausal: 15-300)",
+            "vitamin_d": "25-OH Vitamin D: 28 ng/ml (Referenzbereich: 30-100) ↓",
+            "tsh": "TSH: 2,8 mIU/l (Referenzbereich: 0,27-4,20)",
+            "b12": "Vitamin B12 (Holo-TC): 156 pmol/l (Referenzbereich: 180-914) ↓",
+            "folsaeure": "Folsäure Erythrozyten: 12,5 ng/ml (Referenzbereich: 4,5-20)",
+            "magnesium": "Magnesium: 0,76 mmol/l (Referenzbereich: 0,75-1,0)",
+            "zink": "Zink: 5,8 mg/l (Referenzbereich: 4,5-7,5)",
+            "selen": "Selen: 118 µg/l (Referenzbereich: 100-140)"
+          },
+          "structured_format": [
+            {"parameter": "ferritin", "value": 185, "unit": "ng/ml", "reference": "15-300", "status": "optimal"},
+            {"parameter": "vitamin_d", "value": 28, "unit": "ng/ml", "reference": "30-100", "status": "deficient"},
+            {"parameter": "tsh", "value": 2.8, "unit": "mIU/l", "reference": "0.27-4.20", "status": "borderline"},
+            {"parameter": "vitamin_b12", "value": 156, "unit": "pmol/l", "reference": "180-914", "status": "borderline"},
+            {"parameter": "folate_rbc", "value": 12.5, "unit": "ng/ml", "reference": "4.5-20", "status": "normal"},
+            {"parameter": "magnesium", "value": 0.76, "unit": "mmol/l", "reference": "0.75-1.0", "status": "low_normal"},
+            {"parameter": "zinc", "value": 5.8, "unit": "mg/l", "reference": "4.5-7.5", "status": "normal"},
+            {"parameter": "selenium", "value": 118, "unit": "µg/l", "reference": "100-140", "status": "normal"}
+          ]
+        }
+      ],
+      "alternative_german_terminology": [
+        {
+          "sample_id": "terminology_001",
+          "alternative_names": {
+            "ferritin": ["Ferritin", "Eisen-Speicherprotein", "Fe-Speicher"],
+            "vitamin_d": ["25-OH Vitamin D", "25-OH Vitamin D3", "25-Hydroxyvitamin D", "Calcidiol"],
+            "tsh": ["TSH", "TSH basal", "Thyreotropin", "Thyrotropes Hormon"],
+            "vitamin_b12": ["Vitamin B12", "Cobalamin", "B12", "Holo-Transcobalamin", "Holo-TC"],
+            "folate": ["Folsäure", "Folat", "Folsäure i.E.", "Folsäure Erythrozyten", "RBC Folat"],
+            "magnesium": ["Magnesium", "Mg", "Magnesium Vollblut", "Magnesium Serum"],
+            "zinc": ["Zink", "Zn", "Zink Serum", "Zink Vollblut"],
+            "selenium": ["Selen", "Se", "Selen Plasma", "Selen Vollblut"]
+          },
+          "unit_variations": {
+            "ferritin": ["ng/ml", "µg/l", "ng/mL"],
+            "vitamin_d": ["ng/ml", "nmol/l", "ng/mL"],
+            "tsh": ["mIU/l", "µIU/ml", "mU/l"],
+            "vitamin_b12": ["pmol/l", "pg/ml", "ng/l"],
+            "magnesium": ["mmol/l", "mg/dl", "mEq/l"],
+            "zinc": ["mg/l", "µmol/l", "µg/dl"],
+            "selenium": ["µg/l", "µmol/l", "ng/ml"]
+          }
+        }
+      ],
+      "parsing_challenge_formats": [
+        {
+          "sample_id": "challenge_001",
+          "description": "Complex table format with multiple columns",
+          "format_type": "tabular",
+          "raw_text": "Parameter          Wert    Einheit    Referenzbereich    Status\nFerritin           18      ng/ml      15-150            ↓\n25-OH Vitamin D    22      ng/ml      30-100            ↓\nTSH                3,2     mIU/l      0,27-4,20         \nVitamin B12        245     pmol/l     180-914           ↓\nFolsäure           8,5     ng/ml      4,5-20            \nMagnesium          0,78    mmol/l     0,75-1,0          \nZink               4,8     mg/l       4,5-7,5           \nSelen              95      µg/l       100-140           ↓"
+        },
+        {
+          "sample_id": "challenge_002",
+          "description": "Mixed German/English terminology",
+          "format_type": "mixed_language",
+          "raw_text": "Ferritin: 85 ng/ml (Reference range: 15-150)\nVitamin D (25-OH): 45 ng/ml (Referenzbereich: 30-100)\nTSH: 2.1 mIU/l (Normal: 0.27-4.20)\nB12 (Cobalamin): 320 pmol/l (Reference: 180-914)\nFolic acid (RBC): 14.2 ng/ml (Bereich: 4.5-20)\nMagnesium: 0.89 mmol/l (Referenz: 0.75-1.0)\nZinc: 6.2 mg/l (Normal range: 4.5-7.5)\nSelenium: 145 µg/l (Reference: 100-140)"
+        },
+        {
+          "sample_id": "challenge_003",
+          "description": "Decimal comma format (German numeric style)",
+          "format_type": "german_decimal_format",
+          "raw_text": "Ferritin: 18,5 ng/ml\nVitamin D: 22,7 ng/ml\nTSH: 3,25 mIU/l\nB12: 245,8 pmol/l\nFolsäure: 8,52 ng/ml\nMagnesium: 0,785 mmol/l\nZink: 4,83 mg/l\nSelen: 95,2 µg/l"
+        }
+      ],
+      "edge_case_formats": [
+        {
+          "sample_id": "edge_001",
+          "description": "Values with qualitative indicators",
+          "special_cases": {
+            "below_detection": "Vitamin D: <10 ng/ml (unterhalb Nachweisgrenze)",
+            "above_range": "Ferritin: >500 ng/ml (oberhalb Messbereich)",
+            "estimated": "B12: ~200 pmol/l (geschätzt)",
+            "pending": "Selen: Ergebnis ausstehend"
+          }
+        },
+        {
+          "sample_id": "edge_002",
+          "description": "Multiple test dates and historical values",
+          "historical_data": {
+            "ferritin": [
+              {"date": "15.01.2025", "value": 18, "unit": "ng/ml"},
+              {"date": "15.10.2024", "value": 25, "unit": "ng/ml"},
+              {"date": "15.04.2024", "value": 32, "unit": "ng/ml"}
+            ],
+            "vitamin_d": [
+              {"date": "15.01.2025", "value": 22, "unit": "ng/ml"},
+              {"date": "15.10.2024", "value": 18, "unit": "ng/ml"},
+              {"date": "15.04.2024", "value": 28, "unit": "ng/ml"}
+            ]
+          }
+        }
+      ]
+    },
+    "file_format_simulations": {
+      "pdf_structures": [
+        {
+          "structure_type": "single_page_table",
+          "description": "Standard single-page lab report with tabular layout",
+          "layout": "header_with_patient_info + parameter_table + footer",
+          "parsing_complexity": "low"
+        },
+        {
+          "structure_type": "multi_page_comprehensive",
+          "description": "Multi-page report with different sections",
+          "layout": "cover_page + demographics + blood_chemistry + vitamins + minerals + summary",
+          "parsing_complexity": "medium"
+        },
+        {
+          "structure_type": "scanned_handwritten_notes",
+          "description": "Scanned document with handwritten annotations",
+          "layout": "printed_base + handwritten_notes + stamps",
+          "parsing_complexity": "high",
+          "ocr_required": true
+        }
+      ],
+      "image_formats": [
+        {
+          "format": "jpeg_photo",
+          "description": "Mobile phone photo of lab report",
+          "challenges": ["rotation", "perspective_distortion", "lighting_variations", "shadows"]
+        },
+        {
+          "format": "png_scan", 
+          "description": "High-quality scanner output",
+          "challenges": ["large_file_size", "text_extraction_accuracy"]
+        }
+      ]
+    },
+    "data_extraction_test_cases": [
+      {
+        "test_id": "extract_001",
+        "input_format": "german_lab_report_pdf",
+        "expected_extractions": [
+          {"parameter": "ferritin", "confidence": "high"},
+          {"parameter": "vitamin_d", "confidence": "high"}, 
+          {"parameter": "tsh", "confidence": "high"},
+          {"parameter": "vitamin_b12", "confidence": "medium"},
+          {"parameter": "folate_rbc", "confidence": "medium"},
+          {"parameter": "magnesium", "confidence": "high"},
+          {"parameter": "zinc", "confidence": "high"},
+          {"parameter": "selenium", "confidence": "high"}
+        ]
+      },
+      {
+        "test_id": "extract_002",
+        "input_format": "mixed_language_report",
+        "expected_extractions": [
+          {"parameter": "ferritin", "confidence": "high"},
+          {"parameter": "vitamin_d", "confidence": "medium"},
+          {"parameter": "tsh", "confidence": "high"},
+          {"parameter": "vitamin_b12", "confidence": "low"},
+          {"parameter": "magnesium", "confidence": "medium"}
+        ],
+        "challenges": ["terminology_mapping", "unit_standardization"]
+      }
+    ],
+    "validation_test_data": [
+      {
+        "test_id": "validation_001",
+        "description": "Test reference range interpretation",
+        "sample_data": {
+          "ferritin": {"value": 18, "lab_range": "15-150", "sex": "female", "age": 28},
+          "expected_interpretation": {
+            "lab_status": "low_normal", 
+            "optimal_status": "deficient",
+            "recommendation_priority": "high"
+          }
+        }
+      },
+      {
+        "test_id": "validation_002",
+        "description": "Test sex-specific range application",
+        "sample_data": {
+          "ferritin": {"value": 145, "lab_range": "30-400", "sex": "male", "age": 35},
+          "expected_interpretation": {
+            "lab_status": "normal",
+            "optimal_status": "borderline",
+            "recommendation_priority": "medium"
+          }
+        }
+      }
+    ]
+  }
+}

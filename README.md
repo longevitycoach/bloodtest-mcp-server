@@ -1,6 +1,309 @@
-# Personalized Health Coach MCP Server
+# Bloodtest MCP Server
 
-This project implements a Retrieval-Augmented Generation (RAG) system that acts as a specialized health coach. It leverages a knowledge base of indexed books to provide personalized nutrition and supplement therapy plans based on user-provided health data, such as blood test results.
+A comprehensive health coaching system that combines blood test analysis with evidence-based nutritional therapy recommendations, powered by Retrieval-Augmented Generation (RAG) technology.
+
+## Table of Contents
+
+- [User Manual](#user-manual)
+  - [Key Features](#key-features)
+  - [Getting Started](#getting-started)
+  - [MCP Configuration](#mcp-configuration)
+  - [Using the Health Coach](#using-the-health-coach)
+- [Developer Manual](#developer-manual)
+  - [API Documentation](#api-documentation)
+  - [Technical Stack](#technical-stack)
+  - [Installation](#installation)
+  - [Development Setup](#development-setup)
+  - [Testing](#testing)
+  - [Deployment](#deployment)
+
+## User Manual
+
+### Key Features
+
+- **Blood Test Analysis**: Get optimal ranges for key health markers
+- **Personalized Recommendations**: Evidence-based supplement and lifestyle advice
+- **Medical Knowledge Base**: Powered by German medical literature
+- **Multi-format Support**: Upload blood test results in various formats
+
+
+### Getting Started
+
+1. **Access the System**
+   - Web Interface: [https://supplement-therapy.up.railway.app](https://supplement-therapy.up.railway.app)  
+   - API Base URL: `https://supplement-therapy.up.railway.app/sse`
+
+2. **Authentication**
+   - Obtain API keys from the system administrator
+   - Include the API key in the `Authorization` header of your requests
+
+### MCP Configuration
+
+#### Available Tools
+
+1. **`get_book_info`**
+
+   - Returns metadata about the loaded medical books and available workflows
+   - Example usage: `mcp-cli get_book_info`
+
+2. **`list_workflows`**
+
+   - Lists all available health coaching workflows
+   - Example: `mcp-cli list_workflows`
+
+3. **`supplement_therapy`**
+
+   - Main health coaching workflow for personalized supplement recommendations
+   - Requires patient assessment data
+
+4. **`search_book_knowledge`**
+   - Search through indexed medical knowledge base
+   - Example: `mcp-cli search_book_knowledge "optimal ferritin levels"`
+
+#### Configuration File
+
+Create a `config.yaml` file with the following structure:
+
+```yaml
+mcp:
+  host: localhost
+  port: 8000
+  api_key: your_api_key_here
+  
+vector_store:
+  index_name: supplement-therapy
+  pdf_directory: resources/books
+  
+server:
+  debug: false
+  log_level: info
+```
+
+### Using the Health Coach
+
+1. **Upload Blood Test**
+   - Supported formats: PDF, JPG, PNG
+   - German lab reports are automatically parsed
+
+2. **Complete Health Assessment**
+   - Provide information about your symptoms and lifestyle
+   - Set your health goals
+
+3. **Receive Recommendations**
+   - Personalized supplement plan
+   - Dietary suggestions
+   - Lifestyle modifications
+
+## Developer Manual
+
+### API Documentation
+
+#### Base URL
+
+```bash
+https://supplement-therapy.up.railway.app/sse
+```
+
+#### Authentication
+
+Include your API key in the `Authorization` header:
+
+```http
+Authorization: Bearer your_api_key_here
+```
+
+### Blood Test Reference Values API
+
+#### Endpoints
+
+- `GET /parameters` - List all available parameters
+- `GET /reference/{parameter}` - Get reference ranges for a specific parameter
+- `GET /health` - Check API status
+
+#### Supported Parameters
+
+| Parameter | Unit | Description |
+|-----------|------|-------------|
+| ferritin | ng/ml | Sex-specific ranges |
+| tsh | mIU/l | Thyroid function |
+| vitamin_d | ng/ml | 25-OH Vitamin D |
+| vitamin_b12 | pmol/l | Holotranscobalamin |
+| folate_rbc | ng/ml | Red blood cell folate |
+| zinc | mg/l | Essential mineral |
+| magnesium | mmol/l | Whole blood magnesium |
+| selenium | µg/l | Antioxidant mineral |
+
+### Technical Stack
+
+- **Backend Framework**: FastAPI
+- **Vector Database**: FAISS
+- **Embeddings**: sentence-transformers
+- **File Processing**: PyPDF, python-multipart
+- **Containerization**: Docker
+- **Deployment**: Railway, Kubernetes
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-org/bloodtest-mcp-server.git
+   cd bloodtest-mcp-server
+   ```
+
+2. **Set up Python environment**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
+
+3. **Configuration**
+   Copy the example config file and update with your settings:
+   ```bash
+   cp config.example.yaml config.yaml
+   ```
+
+### Development Setup
+
+1. **Start the development server**
+   ```bash
+   uvicorn main:app --reload
+   ```
+
+2. **Access the API docs**
+   - Swagger UI: http://localhost:8000/docs
+   - ReDoc: http://localhost:8000/redoc
+
+### Testing
+
+Run the test suite with:
+```bash
+pytest tests/
+```
+
+### Deployment
+
+#### Docker
+
+```bash
+docker build -t bloodtest-mcp-server .
+docker run -p 8000:8000 bloodtest-mcp-server
+```
+
+#### Kubernetes
+
+```bash
+kubectl apply -f k8s/
+```
+
+## Technical Details
+
+### RAG System Architecture
+
+1. **Document Processing**
+   - PDFs are split into chunks
+   - Text is embedded using sentence-transformers
+   - Vectors are stored in FAISS index
+
+2. **Query Flow**
+   - User query is embedded
+   - Similar documents are retrieved
+   - Context is passed to LLM for response generation
+
+### 2. **MCP Protocol Tools**
+- **`get_book_info`**: Returns book metadata and RAG status
+- **`list_workflows`**: Available health coaching workflows
+- **`supplement_therapy`**: Main personalized health coaching workflow
+- **`sequential_thinking`**: Multi-step reasoning for complex health analysis
+- **`search_book_knowledge`**: RAG search through indexed medical books
+
+### 3. **RAG (Retrieval-Augmented Generation) System**
+- **Vector Database**: FAISS index with sentence-transformers embeddings
+- **Knowledge Base**: German medical texts on blood values and nutrition therapy
+- **Books Indexed**: 
+  - "Der Blutwerte-Code" by Thiemo Osterhaus
+  - "Naehrstoff-Therapie" by Dr. Helena Orfanos-Boeckel
+- **Search Capabilities**: Evidence-based medical knowledge retrieval
+
+### 4. **Health Coach Workflow Engine**
+- **Comprehensive Assessment**: Demographics, symptoms, lifestyle, goals
+- **Blood Test Interpretation**: Optimal ranges vs lab ranges
+- **Personalized Plans**: Supplement dosages, forms, timing, rationale
+- **Evidence-Based**: All recommendations cited from indexed books
+- **Safety Features**: Medical disclaimers, healthcare consultation requirements
+
+### 5. **File Processing Capabilities**
+- **Blood Test Uploads**: PDF and image formats
+- **German Lab Reports**: Specialized parsing for German medical terminology
+- **Multi-format Support**: Text, PDF, images via various processing tools
+
+### 6. **Output Generation**
+- **Structured Health Plans**: Supplement tables with dosages and timing
+- **Educational Content**: Rationales with book citations
+- **Dietary Recommendations**: Specific foods and preparation methods
+- **Lifestyle Guidance**: Sleep, exercise, stress management
+
+## Technical Stack Analysis
+
+- **Framework**: FastMCP with FastAPI integration
+- **AI/ML**: LangChain, sentence-transformers, FAISS
+- **File Processing**: PyPDF, python-multipart
+- **Configuration**: YAML-based workflow definitions
+- **Authentication**: JWT with bcrypt password hashing
+- **Deployment**: Docker with Railway cloud deployment
+
+## Testing Requirements Identified
+
+1. **API Endpoint Testing**: All 8 parameters with various input combinations
+2. **MCP Tool Testing**: Each tool with success/failure scenarios  
+3. **RAG System Testing**: Knowledge retrieval accuracy and relevance
+4. **Workflow Testing**: Complete health coaching scenarios
+5. **File Processing Testing**: Various blood test report formats
+6. **Integration Testing**: End-to-end patient journey simulation
+7. **Error Handling**: Edge cases, invalid inputs, system failures
+8. **Performance Testing**: Concurrent requests, large file processing
+
+---
+
+## Table of Contents
+
+- [🌟 Comprehensive Capabilities](#-comprehensive-capabilities)
+  - [1. Blood Test Reference Values API](#1-blood-test-reference-values-api)
+  - [2. MCP Protocol Tools](#2-mcp-protocol-tools)
+  - [3. RAG System](#3-rag-system)
+  - [4. Health Coach Workflow Engine](#4-health-coach-workflow-engine)
+  - [5. File Processing Capabilities](#5-file-processing-capabilities)
+  - [6. Output Generation](#6-output-generation)
+- [Technical Stack](#technical-stack)
+- [Testing Requirements](#testing-requirements)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Configuration](#configuration)
+- [API Documentation](#api-documentation)
+  - [Base URL](#base-url)
+  - [Authentication](#authentication)
+  - [Endpoints](#endpoints)
+    - [Get API Information](#get-api-information)
+    - [List Available Parameters](#list-available-parameters)
+    - [Get Reference Range for a Parameter](#get-reference-range-for-a-parameter)
+- [MCP Tools](#mcp-tools)
+  - [Available Tools](#available-tools)
+  - [Workflow Tools](#workflow-tools)
+- [RAG System Setup](#rag-system-setup)
+  - [Initialization](#initialization)
+  - [Configuration](#rag-configuration)
+- [Testing](#testing)
+  - [Running Tests](#running-tests)
+  - [Test Coverage](#test-coverage)
+  - [Test Organization](#test-organization)
+  - [Best Practices](#testing-best-practices)
+- [Deployment](#deployment)
+  - [Docker](#docker-deployment)
+  - [Railway](#railway-deployment)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Blood Test Reference Values API
 

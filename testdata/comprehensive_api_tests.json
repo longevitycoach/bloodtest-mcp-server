@@ -1,0 +1,274 @@
+{
+  "api_endpoint_tests": {
+    "description": "Comprehensive tests for Blood Test Reference Values API endpoints",
+    "base_url": "http://localhost:8000",
+    "test_cases": [
+      {
+        "test_id": "api_001",
+        "name": "root_endpoint_basic",
+        "method": "GET",
+        "endpoint": "/",
+        "description": "Test basic API information endpoint",
+        "expected_status": 200,
+        "expected_fields": ["name", "version", "description", "endpoints"],
+        "validation_rules": {
+          "name": "Blood Test Reference Values API",
+          "version": "1.0.0"
+        }
+      },
+      {
+        "test_id": "api_002", 
+        "name": "health_check_endpoint",
+        "method": "GET",
+        "endpoint": "/health",
+        "description": "Test health check endpoint",
+        "expected_status": 200,
+        "expected_fields": ["status", "book", "version", "rag_enabled"],
+        "validation_rules": {
+          "status": "healthy",
+          "book": "Der Blutwerte Coach, Naehrstoff-Therapie"
+        }
+      },
+      {
+        "test_id": "api_003",
+        "name": "list_all_parameters",
+        "method": "GET", 
+        "endpoint": "/parameters",
+        "description": "Test listing all available blood test parameters",
+        "expected_status": 200,
+        "expected_fields": ["parameters"],
+        "validation_rules": {
+          "parameters_count": 8,
+          "required_parameters": [
+            {"parameter": "ferritin", "unit": "ng/ml"},
+            {"parameter": "tsh", "unit": "mIU/l"},
+            {"parameter": "vitamin_d", "unit": "ng/ml"},
+            {"parameter": "vitamin_b12", "unit": "pmol/l"},
+            {"parameter": "folate_rbc", "unit": "ng/ml"},
+            {"parameter": "zinc", "unit": "mg/l"},
+            {"parameter": "magnesium", "unit": "mmol/l"},
+            {"parameter": "selenium", "unit": "µg/l"}
+          ]
+        }
+      },
+      {
+        "test_id": "api_004",
+        "name": "ferritin_basic_lookup",
+        "method": "GET",
+        "endpoint": "/reference/ferritin",
+        "description": "Test ferritin reference range lookup without sex specification",
+        "expected_status": 200,
+        "expected_fields": ["parameter", "unit", "optimal_range", "classical_range", "explanation", "sex_specific"],
+        "validation_rules": {
+          "parameter": "ferritin",
+          "unit": "ng/ml",
+          "sex_specific": true,
+          "explanation_contains": ["iron storage", "deficiency"]
+        }
+      },
+      {
+        "test_id": "api_005",
+        "name": "ferritin_female_specific",
+        "method": "GET",
+        "endpoint": "/reference/ferritin",
+        "query_params": {"sex": "female"},
+        "description": "Test ferritin reference range with female-specific values",
+        "expected_status": 200,
+        "expected_fields": ["parameter", "unit", "optimal_range", "classical_range", "explanation", "sex_specific", "sex_specific_range"],
+        "validation_rules": {
+          "parameter": "ferritin",
+          "sex_specific": true,
+          "sex_specific_range_contains": ["premenopausal", "postmenopausal"]
+        }
+      },
+      {
+        "test_id": "api_006",
+        "name": "ferritin_male_specific",
+        "method": "GET",
+        "endpoint": "/reference/ferritin",
+        "query_params": {"sex": "male"},
+        "description": "Test ferritin reference range with male-specific values",
+        "expected_status": 200,
+        "validation_rules": {
+          "parameter": "ferritin",
+          "sex_specific": true,
+          "sex_specific_range_contains": ["30–400"]
+        }
+      },
+      {
+        "test_id": "api_007",
+        "name": "vitamin_d_lookup", 
+        "method": "GET",
+        "endpoint": "/reference/vitamin_d",
+        "description": "Test vitamin D reference range lookup",
+        "expected_status": 200,
+        "validation_rules": {
+          "parameter": "vitamin_d",
+          "unit": "ng/ml",
+          "optimal_range": "50–70",
+          "explanation_contains": ["calcium absorption", "immune function"]
+        }
+      },
+      {
+        "test_id": "api_008",
+        "name": "tsh_lookup",
+        "method": "GET", 
+        "endpoint": "/reference/tsh",
+        "description": "Test TSH thyroid hormone reference range",
+        "expected_status": 200,
+        "validation_rules": {
+          "parameter": "tsh",
+          "unit": "mIU/l",
+          "optimal_range": "0.5–2.5",
+          "explanation_contains": ["thyroid-stimulating hormone"]
+        }
+      },
+      {
+        "test_id": "api_009",
+        "name": "vitamin_b12_lookup",
+        "method": "GET",
+        "endpoint": "/reference/vitamin_b12", 
+        "description": "Test vitamin B12 reference range lookup",
+        "expected_status": 200,
+        "validation_rules": {
+          "parameter": "vitamin_b12",
+          "unit": "pmol/l",
+          "optimal_range": ">100",
+          "explanation_contains": ["nerve function", "DNA synthesis"]
+        }
+      },
+      {
+        "test_id": "api_010",
+        "name": "folate_rbc_lookup",
+        "method": "GET",
+        "endpoint": "/reference/folate_rbc",
+        "description": "Test red blood cell folate reference range",
+        "expected_status": 200,
+        "validation_rules": {
+          "parameter": "folate_rbc",
+          "unit": "ng/ml",
+          "optimal_range": ">16",
+          "explanation_contains": ["DNA synthesis", "methylation"]
+        }
+      },
+      {
+        "test_id": "api_011", 
+        "name": "zinc_lookup",
+        "method": "GET",
+        "endpoint": "/reference/zinc",
+        "description": "Test zinc mineral reference range",
+        "expected_status": 200,
+        "validation_rules": {
+          "parameter": "zinc",
+          "unit": "mg/l",
+          "optimal_range": "6–7",
+          "explanation_contains": ["immune function", "enzyme"]
+        }
+      },
+      {
+        "test_id": "api_012",
+        "name": "magnesium_lookup",
+        "method": "GET", 
+        "endpoint": "/reference/magnesium",
+        "description": "Test magnesium mineral reference range",
+        "expected_status": 200,
+        "validation_rules": {
+          "parameter": "magnesium",
+          "unit": "mmol/l",
+          "optimal_range": "0.85–1.0",
+          "explanation_contains": ["enzymatic reactions", "energy production"]
+        }
+      },
+      {
+        "test_id": "api_013",
+        "name": "selenium_lookup",
+        "method": "GET",
+        "endpoint": "/reference/selenium",
+        "description": "Test selenium antioxidant mineral reference range",
+        "expected_status": 200,
+        "validation_rules": {
+          "parameter": "selenium", 
+          "unit": "µg/l",
+          "optimal_range": "140–160",
+          "explanation_contains": ["antioxidant", "thyroid hormone"]
+        }
+      }
+    ],
+    "error_test_cases": [
+      {
+        "test_id": "api_error_001",
+        "name": "invalid_parameter_404",
+        "method": "GET",
+        "endpoint": "/reference/invalid_parameter",
+        "description": "Test 404 error for non-existent parameter",
+        "expected_status": 404,
+        "expected_error_message": "Parameter 'invalid_parameter' not found in reference values"
+      },
+      {
+        "test_id": "api_error_002",
+        "name": "invalid_sex_parameter",
+        "method": "GET", 
+        "endpoint": "/reference/ferritin",
+        "query_params": {"sex": "invalid_sex"},
+        "description": "Test 400 error for invalid sex parameter",
+        "expected_status": 400,
+        "expected_error_message": "Invalid sex. Must be 'male' or 'female'."
+      }
+    ],
+    "alias_test_cases": [
+      {
+        "test_id": "api_alias_001",
+        "name": "vitamin_d_alias_space",
+        "method": "GET",
+        "endpoint": "/reference/vitamin d",
+        "description": "Test vitamin D lookup with space in parameter name",
+        "expected_status": 200,
+        "validation_rules": {
+          "parameter": "vitamin d",
+          "unit": "ng/ml"
+        }
+      },
+      {
+        "test_id": "api_alias_002", 
+        "name": "vitamin_b12_alias",
+        "method": "GET",
+        "endpoint": "/reference/b12",
+        "description": "Test B12 alias for vitamin B12",
+        "expected_status": 200,
+        "validation_rules": {
+          "parameter": "b12",
+          "unit": "pmol/l"
+        }
+      },
+      {
+        "test_id": "api_alias_003",
+        "name": "folate_alias",
+        "method": "GET",
+        "endpoint": "/reference/folate",
+        "description": "Test folate alias for folate_rbc",
+        "expected_status": 200,
+        "validation_rules": {
+          "parameter": "folate",
+          "unit": "ng/ml"
+        }
+      }
+    ],
+    "concurrent_test_cases": [
+      {
+        "test_id": "api_concurrent_001",
+        "name": "concurrent_parameter_requests",
+        "description": "Test system under concurrent API requests",
+        "test_type": "load_test",
+        "concurrent_requests": 10,
+        "endpoints_to_test": [
+          "/reference/ferritin",
+          "/reference/vitamin_d", 
+          "/reference/tsh",
+          "/parameters"
+        ],
+        "expected_success_rate": 100,
+        "max_response_time_ms": 1000
+      }
+    ]
+  }
+}

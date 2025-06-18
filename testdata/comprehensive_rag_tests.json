@@ -1,0 +1,344 @@
+{
+  "rag_system_tests": {
+    "description": "Comprehensive tests for RAG (Retrieval-Augmented Generation) system knowledge retrieval",
+    "test_configuration": {
+      "index_name": "supplement-therapy",
+      "index_directory": "./faiss_index",
+      "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+      "expected_books": [
+        "Der Blutwerte-Code - Thiemo Osterhaus 2023",
+        "Naehrstoff-Therapie - Helena Orfanos-Boeckel 2022/2023"
+      ]
+    },
+    "knowledge_retrieval_tests": [
+      {
+        "test_id": "rag_001",
+        "category": "ferritin_knowledge",
+        "query": "optimal ferritin levels for women premenopausal postmenopausal",
+        "k": 5,
+        "expected_content_themes": [
+          "ferritin",
+          "iron storage",
+          "premenopausal", 
+          "postmenopausal",
+          "optimal range",
+          "15-150",
+          "70-200"
+        ],
+        "validation_criteria": {
+          "min_relevance_score": 0.7,
+          "must_contain_numeric_ranges": true,
+          "should_distinguish_life_stages": true,
+          "content_source_books": ["Der Blutwerte-Code", "Naehrstoff-Therapie"]
+        }
+      },
+      {
+        "test_id": "rag_002",
+        "category": "vitamin_d_synthesis",
+        "query": "vitamin D deficiency symptoms sunlight exposure supplementation dosage",
+        "k": 6,
+        "expected_content_themes": [
+          "vitamin D",
+          "25-OH",
+          "deficiency symptoms",
+          "sunlight",
+          "supplementation",
+          "dosage",
+          "immune function",
+          "calcium absorption"
+        ],
+        "validation_criteria": {
+          "min_relevance_score": 0.65,
+          "must_mention_symptoms": true,
+          "should_include_dosage_guidance": true,
+          "lifestyle_recommendations": true
+        }
+      },
+      {
+        "test_id": "rag_003",
+        "category": "magnesium_forms",
+        "query": "magnesium glycinate citrate absorption sleep muscle function",
+        "k": 4,
+        "expected_content_themes": [
+          "magnesium",
+          "glycinate",
+          "citrate",
+          "absorption",
+          "bioavailability",
+          "sleep",
+          "muscle function",
+          "enzymatic reactions"
+        ],
+        "validation_criteria": {
+          "min_relevance_score": 0.7,
+          "must_compare_forms": true,
+          "should_explain_bioavailability": true,
+          "timing_recommendations": true
+        }
+      },
+      {
+        "test_id": "rag_004",
+        "category": "thyroid_optimization",
+        "query": "TSH optimal range thyroid function selenium zinc iodine",
+        "k": 5,
+        "expected_content_themes": [
+          "TSH",
+          "thyroid",
+          "optimal range",
+          "0.5-2.5",
+          "selenium",
+          "zinc",
+          "iodine",
+          "T3",
+          "T4",
+          "conversion"
+        ],
+        "validation_criteria": {
+          "min_relevance_score": 0.75,
+          "must_specify_optimal_range": true,
+          "should_mention_cofactors": true,
+          "nutrient_interactions": true
+        }
+      },
+      {
+        "test_id": "rag_005",
+        "category": "iron_absorption", 
+        "query": "iron absorption factors vitamin C inhibitors coffee tea calcium",
+        "k": 5,
+        "expected_content_themes": [
+          "iron absorption",
+          "vitamin C",
+          "enhancers",
+          "inhibitors",
+          "coffee",
+          "tea",
+          "calcium",
+          "timing",
+          "heme iron",
+          "non-heme iron"
+        ],
+        "validation_criteria": {
+          "min_relevance_score": 0.7,
+          "must_explain_enhancers_inhibitors": true,
+          "should_provide_timing_guidance": true,
+          "food_interaction_details": true
+        }
+      },
+      {
+        "test_id": "rag_006",
+        "category": "vitamin_b12_forms",
+        "query": "vitamin B12 methylcobalamin cyanocobalamin absorption deficiency",
+        "k": 4,
+        "expected_content_themes": [
+          "vitamin B12",
+          "methylcobalamin", 
+          "cyanocobalamin",
+          "absorption",
+          "deficiency",
+          "nerve function",
+          "DNA synthesis",
+          "intrinsic factor"
+        ],
+        "validation_criteria": {
+          "min_relevance_score": 0.7,
+          "must_compare_forms": true,
+          "should_explain_absorption": true,
+          "deficiency_symptoms": true
+        }
+      },
+      {
+        "test_id": "rag_007",
+        "category": "zinc_immune_function",
+        "query": "zinc immune function dosage timing food interactions",
+        "k": 4,
+        "expected_content_themes": [
+          "zinc",
+          "immune function",
+          "dosage",
+          "timing",
+          "food interactions",
+          "absorption",
+          "copper balance",
+          "enzyme function"
+        ],
+        "validation_criteria": {
+          "min_relevance_score": 0.7,
+          "must_discuss_immune_role": true,
+          "should_mention_copper_balance": true,
+          "dosage_guidelines": true
+        }
+      },
+      {
+        "test_id": "rag_008", 
+        "category": "selenium_thyroid",
+        "query": "selenium thyroid function antioxidant glutathione peroxidase dosage",
+        "k": 4,
+        "expected_content_themes": [
+          "selenium",
+          "thyroid function",
+          "antioxidant",
+          "glutathione peroxidase",
+          "dosage",
+          "selenomethionine",
+          "T4 to T3 conversion"
+        ],
+        "validation_criteria": {
+          "min_relevance_score": 0.7,
+          "must_explain_thyroid_role": true,
+          "should_mention_antioxidant_function": true,
+          "form_recommendations": true
+        }
+      }
+    ],
+    "complex_query_tests": [
+      {
+        "test_id": "rag_complex_001",
+        "category": "multi_nutrient_interaction",
+        "query": "iron vitamin D magnesium absorption interactions optimal timing breakfast empty stomach",
+        "k": 8,
+        "expected_content_themes": [
+          "nutrient interactions",
+          "absorption timing",
+          "iron",
+          "vitamin D",
+          "magnesium",
+          "empty stomach",
+          "with food",
+          "mineral competition"
+        ],
+        "validation_criteria": {
+          "min_relevance_score": 0.6,
+          "must_address_interactions": true,
+          "should_provide_timing_strategy": true,
+          "complex_protocol_guidance": true
+        }
+      },
+      {
+        "test_id": "rag_complex_002",
+        "category": "comprehensive_deficiency_protocol",
+        "query": "multiple nutrient deficiencies iron vitamin D B12 magnesium zinc gradual introduction monitoring",
+        "k": 10,
+        "expected_content_themes": [
+          "multiple deficiencies",
+          "gradual introduction", 
+          "monitoring",
+          "prioritization",
+          "supplement protocol",
+          "safety considerations",
+          "dose escalation"
+        ],
+        "validation_criteria": {
+          "min_relevance_score": 0.65,
+          "must_address_prioritization": true,
+          "should_emphasize_safety": true,
+          "monitoring_guidance": true
+        }
+      }
+    ],
+    "edge_case_tests": [
+      {
+        "test_id": "rag_edge_001",
+        "category": "empty_query",
+        "query": "",
+        "k": 5,
+        "expected_behavior": "error_handling",
+        "expected_result": "empty_or_error_response"
+      },
+      {
+        "test_id": "rag_edge_002",
+        "category": "very_specific_query",
+        "query": "exact dosage timing for 28 year old vegetarian female with ferritin 18 and vitamin D 22",
+        "k": 3,
+        "expected_content_themes": [
+          "dosage",
+          "timing",
+          "vegetarian",
+          "ferritin deficiency",
+          "vitamin D deficiency"
+        ],
+        "validation_criteria": {
+          "min_relevance_score": 0.5,
+          "specific_population_addressed": true,
+          "practical_recommendations": true
+        }
+      },
+      {
+        "test_id": "rag_edge_003",
+        "category": "non_existent_nutrient",
+        "query": "mythical nutrient XYZ123 supplementation dosage",
+        "k": 3,
+        "expected_behavior": "low_relevance_results",
+        "validation_criteria": {
+          "max_relevance_score": 0.3,
+          "should_return_general_nutrition_info": true
+        }
+      }
+    ],
+    "performance_tests": [
+      {
+        "test_id": "rag_perf_001",
+        "category": "response_time",
+        "query": "vitamin D deficiency supplementation",
+        "k": 5,
+        "performance_requirements": {
+          "max_response_time_ms": 2000,
+          "min_relevance_score": 0.7
+        }
+      },
+      {
+        "test_id": "rag_perf_002",
+        "category": "large_k_value",
+        "query": "comprehensive nutrient assessment",
+        "k": 20,
+        "performance_requirements": {
+          "max_response_time_ms": 3000,
+          "should_return_diverse_results": true
+        }
+      }
+    ],
+    "citation_accuracy_tests": [
+      {
+        "test_id": "rag_citation_001",
+        "category": "source_attribution",
+        "query": "ferritin optimal range for women",
+        "k": 3,
+        "validation_criteria": {
+          "must_include_source_information": true,
+          "book_titles_identifiable": true,
+          "page_or_section_references": "preferred"
+        }
+      },
+      {
+        "test_id": "rag_citation_002", 
+        "category": "conflicting_information",
+        "query": "vitamin D dosage recommendations",
+        "k": 5,
+        "validation_criteria": {
+          "should_identify_if_sources_differ": true,
+          "present_range_of_recommendations": true,
+          "acknowledge_variability": true
+        }
+      }
+    ],
+    "validation_framework": {
+      "automatic_checks": [
+        "response_structure_validation",
+        "relevance_score_calculation", 
+        "content_theme_detection",
+        "response_time_measurement"
+      ],
+      "manual_review_criteria": [
+        "medical_accuracy_assessment",
+        "practical_applicability",
+        "safety_consideration_adequacy",
+        "book_knowledge_consistency"
+      ],
+      "success_metrics": {
+        "overall_relevance_threshold": 0.7,
+        "response_time_threshold_ms": 2000,
+        "content_coverage_percentage": 80,
+        "citation_accuracy_percentage": 90
+      }
+    }
+  }
+}

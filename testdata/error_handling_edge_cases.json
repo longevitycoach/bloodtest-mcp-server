@@ -1,0 +1,480 @@
+{
+  "error_handling_edge_cases": {
+    "description": "Comprehensive error handling and edge case testing for Bloodtest MCP Server",
+    "test_categories": {
+      "api_error_scenarios": [
+        {
+          "test_id": "error_001",
+          "category": "invalid_parameters",
+          "scenarios": [
+            {
+              "name": "non_existent_parameter",
+              "request": {
+                "method": "GET",
+                "endpoint": "/reference/nonexistent_param",
+                "expected_status": 404,
+                "expected_error": "Parameter 'nonexistent_param' not found in reference values"
+              }
+            },
+            {
+              "name": "invalid_sex_value",
+              "request": {
+                "method": "GET", 
+                "endpoint": "/reference/ferritin?sex=other",
+                "expected_status": 400,
+                "expected_error": "Invalid sex. Must be 'male' or 'female'."
+              }
+            },
+            {
+              "name": "empty_parameter_name",
+              "request": {
+                "method": "GET",
+                "endpoint": "/reference/",
+                "expected_status": 404,
+                "expected_behavior": "path_not_found"
+              }
+            },
+            {
+              "name": "sql_injection_attempt",
+              "request": {
+                "method": "GET",
+                "endpoint": "/reference/ferritin'; DROP TABLE users; --",
+                "expected_status": 404,
+                "expected_behavior": "parameter_not_found_safe"
+              }
+            },
+            {
+              "name": "xss_attempt_in_parameter",
+              "request": {
+                "method": "GET",
+                "endpoint": "/reference/<script>alert('xss')</script>",
+                "expected_status": 404,
+                "expected_behavior": "parameter_not_found_safe"
+              }
+            }
+          ]
+        },
+        {
+          "test_id": "error_002",
+          "category": "malformed_requests",
+          "scenarios": [
+            {
+              "name": "very_long_parameter_name",
+              "request": {
+                "method": "GET",
+                "endpoint": "/reference/" + "a" * 1000,
+                "expected_status": 404,
+                "expected_behavior": "graceful_handling"
+              }
+            },
+            {
+              "name": "unicode_parameter_name",
+              "request": {
+                "method": "GET",
+                "endpoint": "/reference/vitamín_d_🧬",
+                "expected_status": 404,
+                "expected_behavior": "unicode_safe_handling"
+              }
+            },
+            {
+              "name": "multiple_sex_parameters",
+              "request": {
+                "method": "GET",
+                "endpoint": "/reference/ferritin?sex=male&sex=female",
+                "expected_status": 200,
+                "expected_behavior": "use_last_parameter_value"
+              }
+            }
+          ]
+        },
+        {
+          "test_id": "error_003",
+          "category": "http_method_errors",
+          "scenarios": [
+            {
+              "name": "post_to_readonly_endpoint",
+              "request": {
+                "method": "POST",
+                "endpoint": "/reference/ferritin",
+                "expected_status": 405,
+                "expected_error": "Method Not Allowed"
+              }
+            },
+            {
+              "name": "put_to_readonly_endpoint", 
+              "request": {
+                "method": "PUT",
+                "endpoint": "/parameters",
+                "expected_status": 405,
+                "expected_error": "Method Not Allowed"
+              }
+            },
+            {
+              "name": "delete_to_readonly_endpoint",
+              "request": {
+                "method": "DELETE",
+                "endpoint": "/health",
+                "expected_status": 405,
+                "expected_error": "Method Not Allowed"
+              }
+            }
+          ]
+        }
+      ],
+      "mcp_tool_error_scenarios": [
+        {
+          "test_id": "mcp_error_001",
+          "category": "rag_search_errors",
+          "scenarios": [
+            {
+              "name": "empty_search_query",
+              "tool": "search_book_knowledge",
+              "input": {
+                "query": "",
+                "k": 5
+              },
+              "expected_behavior": "empty_results_or_error",
+              "error_handling": "graceful_response"
+            },
+            {
+              "name": "extremely_long_query",
+              "tool": "search_book_knowledge",
+              "input": {
+                "query": "vitamin D " * 1000,
+                "k": 5
+              },
+              "expected_behavior": "query_truncation_or_error",
+              "max_processing_time_seconds": 10
+            },
+            {
+              "name": "invalid_k_parameter",
+              "tool": "search_book_knowledge",
+              "input": {
+                "query": "vitamin D",
+                "k": -1
+              },
+              "expected_behavior": "parameter_validation_error"
+            },
+            {
+              "name": "extremely_large_k_parameter",
+              "tool": "search_book_knowledge",
+              "input": {
+                "query": "vitamin D",
+                "k": 10000
+              },
+              "expected_behavior": "limit_k_to_reasonable_value"
+            },
+            {
+              "name": "special_characters_in_query",
+              "tool": "search_book_knowledge",
+              "input": {
+                "query": "vitamin D @#$%^&*()[]{}|\\:;\"'<>?,./~`",
+                "k": 3
+              },
+              "expected_behavior": "sanitize_and_search"
+            }
+          ]
+        },
+        {
+          "test_id": "mcp_error_002",
+          "category": "sequential_thinking_errors",
+          "scenarios": [
+            {
+              "name": "invalid_thought_number",
+              "tool": "sequential_thinking",
+              "input": {
+                "thought": "Test thought",
+                "thought_number": 0,
+                "total_thoughts": 3,
+                "next_thought_needed": true
+              },
+              "expected_behavior": "validation_error",
+              "expected_error": "thought_number must be >= 1"
+            },
+            {
+              "name": "thought_number_exceeds_total",
+              "tool": "sequential_thinking", 
+              "input": {
+                "thought": "Test thought",
+                "thought_number": 5,
+                "total_thoughts": 3,
+                "next_thought_needed": false
+              },
+              "expected_behavior": "validation_error",
+              "expected_error": "thought_number cannot exceed total_thoughts"
+            },
+            {
+              "name": "empty_thought_content",
+              "tool": "sequential_thinking",
+              "input": {
+                "thought": "",
+                "thought_number": 1,
+                "total_thoughts": 3,
+                "next_thought_needed": true
+              },
+              "expected_behavior": "validation_error",
+              "expected_error": "thought content cannot be empty"
+            },
+            {
+              "name": "excessive_total_thoughts",
+              "tool": "sequential_thinking",
+              "input": {
+                "thought": "Test thought",
+                "thought_number": 1,
+                "total_thoughts": 1000,
+                "next_thought_needed": true
+              },
+              "expected_behavior": "limit_total_thoughts",
+              "max_allowed_thoughts": 50
+            }
+          ]
+        },
+        {
+          "test_id": "mcp_error_003",
+          "category": "workflow_execution_errors",
+          "scenarios": [
+            {
+              "name": "workflow_with_missing_rag_system",
+              "simulation": "disable_rag_system",
+              "tool": "supplement_therapy",
+              "expected_behavior": "graceful_degradation",
+              "fallback_strategy": "use_api_reference_values_only"
+            },
+            {
+              "name": "workflow_with_corrupted_configuration",
+              "simulation": "corrupt_structure_yaml",
+              "expected_behavior": "configuration_error",
+              "recovery_strategy": "use_default_configuration"
+            }
+          ]
+        }
+      ],
+      "system_resource_edge_cases": [
+        {
+          "test_id": "resource_001",
+          "category": "memory_constraints",
+          "scenarios": [
+            {
+              "name": "low_memory_conditions",
+              "simulation": "limit_available_memory_to_100mb",
+              "expected_behavior": "graceful_performance_degradation",
+              "monitoring": ["memory_usage", "response_times", "error_rates"]
+            },
+            {
+              "name": "memory_leak_simulation",
+              "test_duration_minutes": 30,
+              "operations": "continuous_rag_searches",
+              "validation": "memory_growth_within_acceptable_limits"
+            }
+          ]
+        },
+        {
+          "test_id": "resource_002",
+          "category": "file_system_constraints",
+          "scenarios": [
+            {
+              "name": "faiss_index_file_corruption",
+              "simulation": "corrupt_faiss_index_file",
+              "expected_behavior": "rag_system_failure_with_fallback",
+              "recovery_strategy": "reinitialize_index_or_disable_rag"
+            },
+            {
+              "name": "missing_book_files",
+              "simulation": "remove_pdf_source_files",
+              "expected_behavior": "startup_warning_but_functional_api",
+              "impact": "rag_system_disabled"
+            },
+            {
+              "name": "readonly_file_system",
+              "simulation": "mount_readonly_filesystem",
+              "expected_behavior": "read_only_operations_continue",
+              "affected_features": ["logging", "temporary_files"]
+            }
+          ]
+        }
+      ],
+      "concurrency_edge_cases": [
+        {
+          "test_id": "concurrency_001",
+          "category": "race_conditions",
+          "scenarios": [
+            {
+              "name": "simultaneous_rag_system_initialization",
+              "simulation": "multiple_threads_init_rag",
+              "expected_behavior": "thread_safe_initialization",
+              "validation": "single_rag_instance_created"
+            },
+            {
+              "name": "concurrent_workflow_executions",
+              "concurrent_requests": 20,
+              "tool": "supplement_therapy",
+              "expected_behavior": "isolated_execution_contexts",
+              "validation": "no_cross_contamination"
+            }
+          ]
+        }
+      ],
+      "data_validation_edge_cases": [
+        {
+          "test_id": "validation_001",
+          "category": "blood_test_data_validation",
+          "scenarios": [
+            {
+              "name": "negative_blood_values",
+              "input_data": {
+                "ferritin": -10,
+                "vitamin_d": -5,
+                "tsh": -2.5
+              },
+              "expected_behavior": "validation_error_with_guidance",
+              "error_message": "Blood values cannot be negative"
+            },
+            {
+              "name": "extremely_high_values",
+              "input_data": {
+                "ferritin": 999999,
+                "vitamin_d": 10000,
+                "tsh": 1000
+              },
+              "expected_behavior": "flag_as_potentially_erroneous",
+              "warning_message": "Values extremely high - please verify"
+            },
+            {
+              "name": "missing_units",
+              "input_data": {
+                "ferritin": 85,
+                "vitamin_d": 45,
+                "unit": null
+              },
+              "expected_behavior": "request_unit_clarification",
+              "fallback": "assume_standard_units_with_warning"
+            },
+            {
+              "name": "inconsistent_units",
+              "input_data": {
+                "ferritin": 85,
+                "ferritin_unit": "µg/l",
+                "expected_unit": "ng/ml"
+              },
+              "expected_behavior": "unit_conversion_or_warning",
+              "conversion_factor": 1.0
+            }
+          ]
+        }
+      ],
+      "network_edge_cases": [
+        {
+          "test_id": "network_001",
+          "category": "connection_issues",
+          "scenarios": [
+            {
+              "name": "slow_client_connections",
+              "simulation": "limit_bandwidth_to_1kbps",
+              "timeout_handling": "graceful_timeout_with_retry_suggestion",
+              "max_wait_time_seconds": 30
+            },
+            {
+              "name": "interrupted_connections",
+              "simulation": "disconnect_during_request",
+              "expected_behavior": "cleanup_partial_operations",
+              "resource_cleanup": "immediate"
+            }
+          ]
+        }
+      ],
+      "security_edge_cases": [
+        {
+          "test_id": "security_001",
+          "category": "injection_attempts",
+          "scenarios": [
+            {
+              "name": "path_traversal_attempt",
+              "request": {
+                "endpoint": "/reference/../../../etc/passwd",
+                "expected_behavior": "blocked_or_404",
+                "security_response": "no_system_information_disclosed"
+              }
+            },
+            {
+              "name": "header_injection",
+              "request": {
+                "headers": {
+                  "X-Custom-Header": "value\r\nMalicious: injection"
+                },
+                "expected_behavior": "header_sanitization",
+                "security_validation": "no_header_pollution"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "error_recovery_procedures": [
+      {
+        "error_type": "rag_system_failure",
+        "detection_method": "health_check_monitoring",
+        "recovery_steps": [
+          "attempt_rag_system_restart",
+          "fallback_to_api_only_mode",
+          "notify_administrators",
+          "continue_core_functionality"
+        ],
+        "fallback_capabilities": [
+          "reference_value_lookup",
+          "basic_workflow_execution",
+          "health_monitoring"
+        ]
+      },
+      {
+        "error_type": "high_error_rate",
+        "detection_threshold": "error_rate > 10% for 5 minutes",
+        "recovery_steps": [
+          "reduce_concurrent_request_limit",
+          "enable_circuit_breaker",
+          "investigate_root_cause",
+          "gradual_traffic_restoration"
+        ]
+      },
+      {
+        "error_type": "memory_exhaustion", 
+        "detection_method": "memory_usage > 90%",
+        "recovery_steps": [
+          "trigger_garbage_collection",
+          "reduce_cache_sizes",
+          "reject_new_requests_temporarily",
+          "restart_if_necessary"
+        ]
+      }
+    ],
+    "monitoring_and_alerting": {
+      "error_rate_thresholds": {
+        "warning": "error_rate > 2% for 2 minutes",
+        "critical": "error_rate > 10% for 1 minute"
+      },
+      "response_time_thresholds": {
+        "warning": "95th_percentile > 2000ms for 5 minutes",
+        "critical": "95th_percentile > 5000ms for 2 minutes"
+      },
+      "resource_usage_thresholds": {
+        "memory_warning": "usage > 80% for 10 minutes",
+        "memory_critical": "usage > 95% for 2 minutes",
+        "cpu_warning": "usage > 70% for 15 minutes",
+        "cpu_critical": "usage > 90% for 5 minutes"
+      }
+    },
+    "testing_framework": {
+      "error_injection_tools": [
+        "chaos_monkey_simulation",
+        "network_latency_injection",
+        "memory_pressure_simulation",
+        "file_system_error_injection"
+      ],
+      "validation_methods": [
+        "automated_error_detection",
+        "log_analysis_validation",
+        "health_check_verification",
+        "user_experience_impact_assessment"
+      ]
+    }
+  }
+}

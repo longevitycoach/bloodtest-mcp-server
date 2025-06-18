@@ -1,0 +1,360 @@
+{
+  "complete_workflow_tests": {
+    "description": "End-to-end health coaching workflow tests simulating complete patient interactions",
+    "test_scenarios": [
+      {
+        "test_id": "workflow_001",
+        "scenario_name": "Complete Health Assessment - Young Professional",
+        "description": "Full workflow test from initial contact to personalized supplement plan",
+        "patient_profile": {
+          "demographics": {
+            "age": 28,
+            "sex": "female",
+            "occupation": "Software Developer",
+            "lifestyle": "Vegetarian, moderate exercise, high stress"
+          },
+          "initial_complaints": [
+            "Chronic fatigue despite adequate sleep",
+            "Difficulty concentrating at work",
+            "Cold hands and feet"
+          ],
+          "blood_test_file": "testdata/CityPraxisOst Blutbild 2025.01-open.pdf"
+        },
+        "workflow_steps": [
+          {
+            "step": 1,
+            "action": "system_initialization",
+            "tools_used": ["get_book_info"],
+            "expected_output": "System ready with RAG enabled",
+            "validation": "rag_enabled_true"
+          },
+          {
+            "step": 2,
+            "action": "workflow_invocation", 
+            "tools_used": ["supplement_therapy"],
+            "expected_output": "Comprehensive workflow prompt with assessment structure",
+            "validation": "contains_all_assessment_phases"
+          },
+          {
+            "step": 3,
+            "action": "health_assessment_planning",
+            "tools_used": ["sequential_thinking"],
+            "input": "I need to systematically assess this patient's fatigue and concentration issues with their blood work",
+            "expected_output": "Structured thinking approach for assessment",
+            "validation": "logical_assessment_sequence"
+          },
+          {
+            "step": 4,
+            "action": "knowledge_research_ferritin",
+            "tools_used": ["search_book_knowledge"],
+            "query": "ferritin deficiency fatigue young women vegetarian",
+            "expected_content": "Ferritin's role in energy, vegetarian deficiency risks",
+            "validation": "relevant_ferritin_information"
+          },
+          {
+            "step": 5,
+            "action": "knowledge_research_vitamin_d",
+            "tools_used": ["search_book_knowledge"], 
+            "query": "vitamin D deficiency concentration mood winter",
+            "expected_content": "Vitamin D's cognitive and mood effects",
+            "validation": "vitamin_d_cognitive_connection"
+          },
+          {
+            "step": 6,
+            "action": "supplement_form_research",
+            "tools_used": ["search_book_knowledge"],
+            "query": "iron bisglycinate vs sulfate absorption vegetarian",
+            "expected_content": "Iron form recommendations for vegetarians",
+            "validation": "iron_form_guidance"
+          },
+          {
+            "step": 7,
+            "action": "plan_synthesis",
+            "tools_used": ["sequential_thinking"],
+            "input": "Based on research, prioritize iron and vitamin D with specific forms and timing",
+            "expected_output": "Prioritized supplement strategy",
+            "validation": "evidence_based_prioritization"
+          }
+        ],
+        "expected_final_plan": {
+          "priority_supplements": [
+            {
+              "name": "Iron",
+              "form": "Bisglycinate",
+              "dosage": "25mg every other day",
+              "timing": "Empty stomach with vitamin C",
+              "rationale": "Gentle form for vegetarians, addresses ferritin deficiency"
+            },
+            {
+              "name": "Vitamin D3",
+              "form": "With K2",
+              "dosage": "4000-5000 IU daily",
+              "timing": "With breakfast",
+              "rationale": "Supports concentration and mood, especially in winter"
+            }
+          ],
+          "dietary_recommendations": [
+            "Increase iron-rich plant foods",
+            "Combine with vitamin C sources",
+            "Separate iron from coffee/tea"
+          ],
+          "monitoring_plan": "Retest ferritin and vitamin D in 3 months"
+        },
+        "success_criteria": [
+          "all_workflow_steps_completed",
+          "evidence_based_recommendations",
+          "book_citations_included",
+          "safety_disclaimers_present",
+          "personalized_to_vegetarian_lifestyle"
+        ]
+      },
+      {
+        "test_id": "workflow_002",
+        "scenario_name": "Athletic Performance Optimization",
+        "description": "Workflow for active male seeking performance enhancement",
+        "patient_profile": {
+          "demographics": {
+            "age": 35,
+            "sex": "male", 
+            "occupation": "Marketing Manager",
+            "lifestyle": "CrossFit athlete, high stress, omnivore"
+          },
+          "initial_complaints": [
+            "Decreased athletic performance",
+            "Longer recovery times",
+            "Sleep disturbances"
+          ],
+          "goals": [
+            "Optimize athletic performance", 
+            "Improve recovery times",
+            "Better sleep quality"
+          ]
+        },
+        "workflow_steps": [
+          {
+            "step": 1,
+            "action": "performance_assessment_planning",
+            "tools_used": ["sequential_thinking"],
+            "input": "Athletic male with performance decline - need to assess recovery nutrients",
+            "expected_output": "Performance-focused assessment approach"
+          },
+          {
+            "step": 2,
+            "action": "magnesium_research",
+            "tools_used": ["search_book_knowledge"],
+            "query": "magnesium athletic performance recovery muscle function sleep",
+            "expected_content": "Magnesium's role in athletic performance and recovery"
+          },
+          {
+            "step": 3,
+            "action": "zinc_research",
+            "tools_used": ["search_book_knowledge"],
+            "query": "zinc testosterone athletic performance recovery",
+            "expected_content": "Zinc's importance for male athletes"
+          },
+          {
+            "step": 4,
+            "action": "timing_optimization",
+            "tools_used": ["search_book_knowledge"], 
+            "query": "supplement timing athletic performance pre post workout",
+            "expected_content": "Optimal timing strategies for athletes"
+          },
+          {
+            "step": 5,
+            "action": "plan_formulation",
+            "tools_used": ["sequential_thinking"],
+            "input": "Create performance-optimized supplement plan with workout timing",
+            "expected_output": "Athletic-specific supplement protocol"
+          }
+        ],
+        "expected_final_plan": {
+          "performance_supplements": [
+            {
+              "name": "Magnesium Glycinate",
+              "dosage": "400mg",
+              "timing": "Post-workout or before bed",
+              "rationale": "Muscle recovery and sleep optimization"
+            },
+            {
+              "name": "Zinc Picolinate", 
+              "dosage": "15mg",
+              "timing": "Evening with food",
+              "rationale": "Support testosterone and recovery"
+            }
+          ],
+          "performance_strategies": [
+            "Pre-workout nutrition timing",
+            "Post-workout recovery protocols",
+            "Sleep optimization techniques"
+          ]
+        },
+        "success_criteria": [
+          "performance_focused_recommendations",
+          "athletic_timing_considerations",
+          "recovery_optimization_addressed",
+          "male_specific_nutrients_included"
+        ]
+      },
+      {
+        "test_id": "workflow_003",
+        "scenario_name": "Complex Multi-Deficiency Case",
+        "description": "Challenging case with multiple severe deficiencies requiring careful prioritization",
+        "patient_profile": {
+          "demographics": {
+            "age": 42,
+            "sex": "female",
+            "health_history": "Chronic fatigue syndrome, digestive issues"
+          },
+          "blood_results": {
+            "ferritin": 8,
+            "vitamin_d": 12,
+            "vitamin_b12": 125,
+            "magnesium": 0.68,
+            "zinc": 3.2
+          },
+          "complexity_factors": [
+            "Multiple severe deficiencies",
+            "Digestive absorption issues", 
+            "Medication interactions possible",
+            "Previous supplement intolerance"
+          ]
+        },
+        "workflow_steps": [
+          {
+            "step": 1,
+            "action": "complexity_assessment",
+            "tools_used": ["sequential_thinking"],
+            "input": "Multiple severe deficiencies with absorption issues - need careful prioritization",
+            "expected_output": "Risk-aware assessment strategy"
+          },
+          {
+            "step": 2,
+            "action": "absorption_research", 
+            "tools_used": ["search_book_knowledge"],
+            "query": "nutrient absorption digestive issues gentle forms gradual introduction",
+            "expected_content": "Absorption optimization strategies"
+          },
+          {
+            "step": 3,
+            "action": "prioritization_research",
+            "tools_used": ["search_book_knowledge"],
+            "query": "multiple nutrient deficiencies prioritization safety monitoring",
+            "expected_content": "Safe multi-deficiency protocols"
+          },
+          {
+            "step": 4,
+            "action": "gentle_forms_research",
+            "tools_used": ["search_book_knowledge"],
+            "query": "gentle supplement forms sensitive stomach iron vitamin D",
+            "expected_content": "Well-tolerated supplement forms"
+          },
+          {
+            "step": 5,
+            "action": "monitoring_protocol",
+            "tools_used": ["sequential_thinking"],
+            "input": "Design safe introduction protocol with monitoring checkpoints",
+            "expected_output": "Graduated introduction plan with safety measures"
+          }
+        ],
+        "expected_final_plan": {
+          "phase_1_priority": [
+            {
+              "supplement": "Vitamin D3 liquid",
+              "starting_dose": "2000 IU",
+              "escalation": "Increase to 4000 IU after 2 weeks",
+              "rationale": "Fastest absorption, supports multiple systems"
+            }
+          ],
+          "phase_2_addition": [
+            {
+              "supplement": "Iron bisglycinate", 
+              "starting_dose": "15mg every other day",
+              "timing": "After vitamin D tolerance established",
+              "rationale": "Gentlest iron form, critical deficiency"
+            }
+          ],
+          "monitoring_schedule": {
+            "2_weeks": "Tolerance check, vitamin D increase",
+            "6_weeks": "Add iron if no adverse effects",
+            "12_weeks": "Blood work reassessment"
+          },
+          "safety_measures": [
+            "Start with single supplement",
+            "Monitor for adverse reactions",
+            "Healthcare provider coordination",
+            "Conservative dosing approach"
+          ]
+        },
+        "success_criteria": [
+          "safety_prioritized_approach",
+          "graduated_introduction_plan",
+          "monitoring_schedule_included",
+          "healthcare_provider_coordination",
+          "conservative_dosing_emphasized"
+        ]
+      }
+    ],
+    "integration_error_tests": [
+      {
+        "test_id": "workflow_error_001",
+        "scenario_name": "RAG System Failure",
+        "description": "Test workflow behavior when RAG search fails",
+        "simulated_failure": "rag_search_timeout",
+        "expected_behavior": "graceful_degradation_to_general_recommendations",
+        "fallback_strategy": "use_built_in_reference_values"
+      },
+      {
+        "test_id": "workflow_error_002",
+        "scenario_name": "Invalid Blood Test Data",
+        "description": "Test handling of corrupted or invalid blood test input",
+        "invalid_input": "corrupted_pdf_file",
+        "expected_behavior": "request_manual_data_entry",
+        "error_handling": "clear_error_message_with_alternatives"
+      }
+    ],
+    "performance_benchmarks": [
+      {
+        "test_id": "workflow_perf_001",
+        "metric": "complete_workflow_time",
+        "scenario": "Standard health assessment",
+        "target_time_seconds": 30,
+        "includes": [
+          "tool_initialization",
+          "rag_searches",
+          "sequential_thinking",
+          "plan_generation"
+        ]
+      },
+      {
+        "test_id": "workflow_perf_002",
+        "metric": "concurrent_workflow_handling",
+        "scenario": "Multiple simultaneous patient assessments",
+        "concurrent_users": 5,
+        "target_response_time_seconds": 45,
+        "resource_limits": "within_system_capacity"
+      }
+    ],
+    "validation_framework": {
+      "automatic_validation": [
+        "workflow_step_completion",
+        "tool_interaction_success",
+        "output_format_validation",
+        "safety_disclaimer_presence",
+        "book_citation_inclusion"
+      ],
+      "content_quality_checks": [
+        "medical_accuracy_review",
+        "recommendation_appropriateness",
+        "dosage_safety_validation",
+        "interaction_consideration",
+        "personalization_adequacy"
+      ],
+      "success_thresholds": {
+        "workflow_completion_rate": 95,
+        "recommendation_accuracy": 90,
+        "safety_compliance": 100,
+        "personalization_score": 85
+      }
+    }
+  }
+}

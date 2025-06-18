@@ -1,0 +1,271 @@
+{
+  "blood_analysis_scenarios": {
+    "description": "Realistic blood test analysis scenarios for comprehensive health coaching workflow testing",
+    "test_patients": [
+      {
+        "patient_id": "test_patient_001",
+        "scenario_name": "Young Professional with Fatigue",
+        "demographics": {
+          "age": 28,
+          "sex": "female", 
+          "height_cm": 165,
+          "weight_kg": 62,
+          "bmi": 22.8,
+          "occupation": "Software Developer",
+          "location": "Berlin, Germany"
+        },
+        "presenting_symptoms": [
+          "Chronic fatigue despite adequate sleep",
+          "Difficulty concentrating at work",
+          "Cold hands and feet",
+          "Hair thinning",
+          "Low mood in winter months"
+        ],
+        "lifestyle_factors": {
+          "diet": "Vegetarian for 3 years",
+          "exercise": "Yoga 2x/week, walking",
+          "sleep": "7-8 hours nightly, good quality",
+          "stress_level": "Moderate (work deadlines)",
+          "supplements_current": ["Multivitamin"],
+          "alcohol": "1-2 glasses wine per week",
+          "smoking": "Never"
+        },
+        "blood_test_results": {
+          "test_date": "2025-01-15",
+          "lab": "Labor Berlin",
+          "parameters": [
+            {"name": "ferritin", "value": 18, "unit": "ng/ml", "lab_range": "15-150", "status": "low_normal"},
+            {"name": "vitamin_d", "value": 22, "unit": "ng/ml", "lab_range": "30-100", "status": "deficient"},
+            {"name": "vitamin_b12", "value": 245, "unit": "pmol/l", "lab_range": "180-914", "status": "low_normal"},
+            {"name": "tsh", "value": 3.2, "unit": "mIU/l", "lab_range": "0.27-4.20", "status": "high_normal"},
+            {"name": "folate_rbc", "value": 8.5, "unit": "ng/ml", "lab_range": "4.5-20", "status": "low_normal"},
+            {"name": "magnesium", "value": 0.78, "unit": "mmol/l", "lab_range": "0.75-1.0", "status": "low_normal"},
+            {"name": "zinc", "value": 4.8, "unit": "mg/l", "lab_range": "4.5-7.5", "status": "low_normal"},
+            {"name": "selenium", "value": 95, "unit": "µg/l", "lab_range": "100-140", "status": "deficient"}
+          ]
+        },
+        "optimal_analysis": {
+          "deficiencies_identified": [
+            {"parameter": "vitamin_d", "severity": "moderate", "optimal_target": "50-70 ng/ml"},
+            {"parameter": "ferritin", "severity": "severe", "optimal_target": "70-200 ng/ml"},
+            {"parameter": "selenium", "severity": "mild", "optimal_target": "140-160 µg/l"},
+            {"parameter": "vitamin_b12", "severity": "mild", "optimal_target": ">100 pmol/l"},
+            {"parameter": "tsh", "severity": "suboptimal", "optimal_target": "0.5-2.5 mIU/l"}
+          ],
+          "symptom_correlation": {
+            "fatigue": ["vitamin_d", "ferritin", "tsh"],
+            "cold_extremities": ["ferritin", "tsh"],
+            "hair_thinning": ["ferritin", "selenium", "zinc"],
+            "concentration_issues": ["vitamin_d", "vitamin_b12", "magnesium"],
+            "winter_mood": ["vitamin_d"]
+          }
+        },
+        "expected_recommendations": {
+          "priority_supplements": [
+            {"name": "Vitamin D3", "form": "cholecalciferol with K2", "dose": "4000-5000 IU daily", "timing": "with breakfast"},
+            {"name": "Iron", "form": "bisglycinate", "dose": "25mg every other day", "timing": "empty stomach with vitamin C"},
+            {"name": "Selenium", "form": "selenomethionine", "dose": "100-200 µg daily", "timing": "with meal"},
+            {"name": "B-Complex", "form": "methylated forms", "dose": "1 capsule daily", "timing": "with breakfast"}
+          ],
+          "dietary_recommendations": [
+            "Increase iron-rich plant foods: lentils, spinach, pumpkin seeds",
+            "Add vitamin C with iron-rich meals (bell peppers, citrus)",
+            "Include Brazil nuts for selenium (2-3 nuts daily)",
+            "Consider adding fish or algae oil for omega-3s"
+          ],
+          "lifestyle_modifications": [
+            "Morning sunlight exposure 15-20 minutes daily",
+            "Cook in cast iron cookware",
+            "Separate iron supplements from coffee/tea by 2 hours",
+            "Consider light therapy during winter months"
+          ]
+        }
+      },
+      {
+        "patient_id": "test_patient_002", 
+        "scenario_name": "Active Male with Suboptimal Performance",
+        "demographics": {
+          "age": 35,
+          "sex": "male",
+          "height_cm": 180,
+          "weight_kg": 78,
+          "bmi": 24.1,
+          "occupation": "Marketing Manager",
+          "location": "Munich, Germany"
+        },
+        "presenting_symptoms": [
+          "Decreased athletic performance",
+          "Longer recovery times after workouts",
+          "Occasional muscle cramps",
+          "Sleep disturbances", 
+          "Mild anxiety before important meetings"
+        ],
+        "lifestyle_factors": {
+          "diet": "Omnivore, focuses on protein",
+          "exercise": "CrossFit 4x/week, running 2x/week",
+          "sleep": "6-7 hours, sometimes interrupted",
+          "stress_level": "High (demanding job)",
+          "supplements_current": ["Protein powder", "Creatine"],
+          "alcohol": "3-4 beers per week",
+          "smoking": "Never"
+        },
+        "blood_test_results": {
+          "test_date": "2025-01-20",
+          "lab": "Labor München",
+          "parameters": [
+            {"name": "ferritin", "value": 145, "unit": "ng/ml", "lab_range": "30-400", "status": "normal"},
+            {"name": "vitamin_d", "value": 35, "unit": "ng/ml", "lab_range": "30-100", "status": "low_normal"},
+            {"name": "vitamin_b12", "value": 387, "unit": "pmol/l", "lab_range": "180-914", "status": "normal"},
+            {"name": "tsh", "value": 1.8, "unit": "mIU/l", "lab_range": "0.27-4.20", "status": "optimal"},
+            {"name": "folate_rbc", "value": 18.2, "unit": "ng/ml", "lab_range": "4.5-20", "status": "optimal"},
+            {"name": "magnesium", "value": 0.82, "unit": "mmol/l", "lab_range": "0.75-1.0", "status": "borderline"},
+            {"name": "zinc", "value": 5.5, "unit": "mg/l", "lab_range": "4.5-7.5", "status": "low_normal"},
+            {"name": "selenium", "value": 125, "unit": "µg/l", "lab_range": "100-140", "status": "normal"}
+          ]
+        },
+        "optimal_analysis": {
+          "deficiencies_identified": [
+            {"parameter": "vitamin_d", "severity": "mild", "optimal_target": "50-70 ng/ml"},
+            {"parameter": "magnesium", "severity": "mild", "optimal_target": "0.85-1.0 mmol/l"},
+            {"parameter": "zinc", "severity": "mild", "optimal_target": "6-7 mg/l"},
+            {"parameter": "selenium", "severity": "mild", "optimal_target": "140-160 µg/l"}
+          ],
+          "symptom_correlation": {
+            "performance_decline": ["vitamin_d", "magnesium", "zinc"],
+            "recovery_issues": ["magnesium", "zinc"],
+            "muscle_cramps": ["magnesium"],
+            "sleep_disturbances": ["magnesium"],
+            "anxiety": ["magnesium", "vitamin_d"]
+          }
+        },
+        "expected_recommendations": {
+          "priority_supplements": [
+            {"name": "Magnesium", "form": "glycinate", "dose": "400mg", "timing": "before bed"},
+            {"name": "Vitamin D3", "form": "with K2", "dose": "3000 IU daily", "timing": "with breakfast"},
+            {"name": "Zinc", "form": "picolinate", "dose": "15mg", "timing": "evening with food"},
+            {"name": "Omega-3", "form": "EPA/DHA", "dose": "2g daily", "timing": "with meals"}
+          ],
+          "dietary_recommendations": [
+            "Increase magnesium-rich foods: dark leafy greens, nuts, seeds",
+            "Add zinc-rich foods: oysters, grass-fed beef, pumpkin seeds",
+            "Include fatty fish 2-3x per week",
+            "Time carbohydrate intake around workouts"
+          ],
+          "lifestyle_modifications": [
+            "Prioritize 7-8 hours sleep, consistent bedtime",
+            "Morning sunlight exposure for circadian rhythm",
+            "Consider magnesium bath soaks for recovery",
+            "Stress management: meditation or breathing exercises"
+          ]
+        }
+      },
+      {
+        "patient_id": "test_patient_003",
+        "scenario_name": "Postmenopausal Woman with Bone Health Concerns",
+        "demographics": {
+          "age": 54,
+          "sex": "female",
+          "height_cm": 162,
+          "weight_kg": 68,
+          "bmi": 25.9,
+          "occupation": "Teacher",
+          "location": "Hamburg, Germany"
+        },
+        "presenting_symptoms": [
+          "Joint stiffness in the morning",
+          "Concerns about bone density",
+          "Hot flashes (mild)",
+          "Occasional brain fog",
+          "Fatigue in the afternoon"
+        ],
+        "lifestyle_factors": {
+          "diet": "Mediterranean-style, limited dairy",
+          "exercise": "Walking, occasional yoga",
+          "sleep": "7-8 hours, hot flashes disrupt occasionally", 
+          "stress_level": "Low to moderate",
+          "supplements_current": ["Calcium/Vitamin D combination"],
+          "alcohol": "1 glass wine with dinner most nights",
+          "smoking": "Quit 5 years ago"
+        },
+        "blood_test_results": {
+          "test_date": "2025-01-25",
+          "lab": "Labor Hamburg",
+          "parameters": [
+            {"name": "ferritin", "value": 185, "unit": "ng/ml", "lab_range": "15-300", "status": "optimal"},
+            {"name": "vitamin_d", "value": 28, "unit": "ng/ml", "lab_range": "30-100", "status": "deficient"},
+            {"name": "vitamin_b12", "value": 156, "unit": "pmol/l", "lab_range": "180-914", "status": "borderline"},
+            {"name": "tsh", "value": 2.8, "unit": "mIU/l", "lab_range": "0.27-4.20", "status": "borderline"},
+            {"name": "folate_rbc", "value": 12.5, "unit": "ng/ml", "lab_range": "4.5-20", "status": "normal"},
+            {"name": "magnesium", "value": 0.76, "unit": "mmol/l", "lab_range": "0.75-1.0", "status": "low_normal"},
+            {"name": "zinc", "value": 5.8, "unit": "mg/l", "lab_range": "4.5-7.5", "status": "normal"},
+            {"name": "selenium", "value": 118, "unit": "µg/l", "lab_range": "100-140", "status": "normal"}
+          ]
+        },
+        "optimal_analysis": {
+          "deficiencies_identified": [
+            {"parameter": "vitamin_d", "severity": "moderate", "optimal_target": "50-70 ng/ml"},
+            {"parameter": "vitamin_b12", "severity": "mild", "optimal_target": ">180 pmol/l"},
+            {"parameter": "tsh", "severity": "suboptimal", "optimal_target": "0.5-2.5 mIU/l"},
+            {"parameter": "magnesium", "severity": "mild", "optimal_target": "0.85-1.0 mmol/l"},
+            {"parameter": "selenium", "severity": "mild", "optimal_target": "140-160 µg/l"}
+          ],
+          "symptom_correlation": {
+            "joint_stiffness": ["vitamin_d", "magnesium"],
+            "bone_concerns": ["vitamin_d", "magnesium"],
+            "brain_fog": ["vitamin_b12", "tsh"],
+            "fatigue": ["vitamin_d", "tsh", "magnesium"],
+            "hot_flashes": ["magnesium"]
+          }
+        },
+        "expected_recommendations": {
+          "priority_supplements": [
+            {"name": "Vitamin D3", "form": "with K2 and magnesium", "dose": "4000-5000 IU daily", "timing": "with breakfast"},
+            {"name": "Magnesium", "form": "citrate/glycinate blend", "dose": "300-400mg", "timing": "evening"},
+            {"name": "B12", "form": "methylcobalamin", "dose": "500 µg daily", "timing": "morning"},
+            {"name": "Selenium", "form": "selenomethionine", "dose": "100 µg daily", "timing": "with meal"}
+          ],
+          "dietary_recommendations": [
+            "Include magnesium-rich foods: dark chocolate, almonds, avocado",
+            "Boost B12 with nutritional yeast, fish, eggs",
+            "Add selenium-rich foods: Brazil nuts (2 daily), seafood",
+            "Weight-bearing exercise for bone health"
+          ],
+          "lifestyle_modifications": [
+            "Morning sunlight exposure for vitamin D and circadian rhythm",
+            "Resistance training 2-3x per week for bone density",
+            "Stress reduction for thyroid support",
+            "Consider functional medicine thyroid evaluation"
+          ]
+        }
+      }
+    ],
+    "edge_case_scenarios": [
+      {
+        "patient_id": "edge_case_001",
+        "scenario_name": "Multiple Severe Deficiencies",
+        "description": "Patient with multiple severe nutrient deficiencies requiring careful prioritization",
+        "blood_results": [
+          {"name": "ferritin", "value": 8, "status": "severely_deficient"},
+          {"name": "vitamin_d", "value": 12, "status": "severely_deficient"},
+          {"name": "vitamin_b12", "value": 125, "status": "deficient"},
+          {"name": "magnesium", "value": 0.68, "status": "deficient"},
+          {"name": "zinc", "value": 3.2, "status": "severely_deficient"}
+        ],
+        "expected_approach": "gradual_introduction_with_monitoring"
+      },
+      {
+        "patient_id": "edge_case_002",
+        "scenario_name": "All Values Optimal",
+        "description": "Patient with all blood markers in optimal ranges seeking performance optimization",
+        "blood_results": [
+          {"name": "ferritin", "value": 120, "status": "optimal"},
+          {"name": "vitamin_d", "value": 60, "status": "optimal"},
+          {"name": "vitamin_b12", "value": 450, "status": "optimal"},
+          {"name": "tsh", "value": 1.5, "status": "optimal"},
+          {"name": "magnesium", "value": 0.92, "status": "optimal"}
+        ],
+        "expected_approach": "maintenance_and_lifestyle_optimization"
+      }
+    ]
+  }
+}
