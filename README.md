@@ -178,9 +178,138 @@ REFERENCE_VALUES = {
 }
 ```
 
-## Health Check Endpoint
+## MCP Tools for Blood Test Reference Values
 
-This project implements a Retrieval-Augmented Generation (RAG) system that acts as a specialized health coach. It leverages a knowledge base of indexed books to provide personalized nutrition and supplement therapy plans based on user-provided health data, such as blood test results.
+The Blood Test MCP Server provides a comprehensive set of tools for programmatic access to blood test reference values. These tools can be used within the MCP framework to retrieve and process blood test information.
+
+### Available Tools
+
+#### 1. BloodTestTool
+
+The `BloodTestTool` class provides methods to interact with blood test reference values.
+
+##### Methods
+
+###### `get_optimal_values(parameter: str, sex: Optional[str] = None) -> Dict[str, Any]`
+
+Retrieves the optimal and classical reference ranges for a specific blood test parameter.
+
+**Parameters:**
+- `parameter` (str): The name of the blood test parameter (case-insensitive).
+- `sex` (str, optional): The sex of the patient ('male' or 'female') for sex-specific ranges.
+
+**Returns:**
+A dictionary containing the parameter details, including optimal and classical ranges, units, and explanations.
+
+**Raises:**
+- `HTTPException`: If the parameter is not found or if an invalid sex is provided.
+
+**Example:**
+```python
+# Get reference values for ferritin
+tool = BloodTestTool()
+result = tool.get_optimal_values("ferritin")
+
+# Get sex-specific reference values
+female_values = tool.get_optimal_values("ferritin", "female")
+```
+
+###### `list_parameters() -> List[Dict[str, str]]`
+
+Lists all available blood test parameters and their units.
+
+**Returns:**
+A list of dictionaries, each containing 'parameter' and 'unit' keys.
+
+**Example:**
+```python
+# List all available parameters
+tool = BloodTestTool()
+parameters = tool.list_parameters()
+```
+
+### Integration with MCP
+
+The BloodTestTool can be registered with an MCP server to make it available for use in MCP workflows:
+
+```python
+from mcp import MCP
+from bloodtest_tools.mcp_tool import BloodTestTool
+
+# Create MCP instance
+mcp = MCP()
+
+# Register the BloodTestTool
+mcp.register_tool(BloodTestTool())
+
+# Now the tool can be used in MCP workflows
+```
+
+## Testing
+
+### Running Tests
+
+The test suite includes unit tests for the core functionality and integration tests for the API endpoints.
+
+#### Running All Tests
+
+```bash
+# Run all tests
+pytest tests/ -v
+
+# Run with coverage report
+pytest --cov=bloodtest_tools tests/
+```
+
+#### Running Specific Test Files
+
+```bash
+# Run API endpoint tests
+pytest tests/test_api_endpoints.py -v
+
+# Run core functionality tests
+pytest tests/test_bloodtest_tools.py -v
+
+# Run integration tests
+pytest tests/test_integration.py -v
+```
+
+### Test Coverage
+
+To generate a test coverage report:
+
+```bash
+# Install coverage if not already installed
+pip install pytest-cov
+
+# Run tests with coverage
+pytest --cov=bloodtest_tools --cov-report=term-missing tests/
+
+# Generate HTML coverage report
+pytest --cov=bloodtest_tools --cov-report=html tests/
+# Open htmlcov/index.html in your browser
+```
+
+### Writing Tests
+
+When adding new features or fixing bugs, please add corresponding tests. Follow these guidelines:
+
+1. Test files should be named `test_*.py` or `*_test.py`
+2. Test functions should start with `test_`
+3. Use descriptive test function names that describe what's being tested
+4. Test both success and error cases
+5. Mock external dependencies when appropriate
+
+Example test:
+
+```python
+def test_get_optimal_values_valid_parameter():
+    """Test getting optimal values for a valid parameter."""
+    tool = BloodTestTool()
+    result = tool.get_optimal_values("ferritin")
+    assert "optimal_range" in result
+    assert result["parameter"] == "ferritin"
+```
 
 ## Health Check Endpoint
 
@@ -500,6 +629,225 @@ docker logs -f bloodtest-mcp-server
 - Look for errors in the logs: `docker logs bloodtest-mcp-server`
 - Verify the port mapping is correct
 - Check if another service is using the same port
+
+## Testing
+
+This project includes a comprehensive test suite to ensure the reliability and correctness of the Blood Test Reference Values API and MCP tools. The tests are organized into several categories to provide thorough coverage.
+
+### Test Organization
+
+The test suite is organized as follows:
+
+- `tests/test_api_endpoints.py`: Tests for the FastAPI endpoints
+- `tests/test_bloodtest_tools.py`: Unit tests for the BloodTestTool class and core functions
+- `tests/test_edge_cases.py`: Tests for edge cases and error conditions
+- `tests/test_integration.py`: Integration tests and workflow simulations
+
+### Running Tests
+
+To run the entire test suite:
+
+```bash
+# Run all tests
+pytest tests/ -v
+
+# Run a specific test file
+pytest tests/test_api_endpoints.py -v
+
+# Run a specific test function
+pytest tests/test_api_endpoints.py::test_root_endpoint -v
+```
+
+### Test Coverage
+
+To generate a test coverage report:
+
+```bash
+# Install coverage if not already installed
+pip install pytest-cov
+
+# Run tests with coverage
+pytest --cov=bloodtest_tools tests/
+
+# Generate HTML report
+pytest --cov=bloodtest_tools --cov-report=html tests/
+open htmlcov/index.html  # View the report in your browser
+```
+
+### MCP Tool Testing
+
+The MCP tool is thoroughly tested with various scenarios:
+
+1. **Basic Functionality**
+   - Retrieving reference values for valid parameters
+   - Handling sex-specific reference ranges
+   - Listing available parameters
+
+2. **Error Handling**
+   - Invalid parameter names
+   - Invalid sex values
+   - Empty or malformed requests
+
+3. **Edge Cases**
+   - Very long parameter names
+   - Special characters in parameter names
+   - Case sensitivity
+   - Concurrent API requests
+   - None/Null values
+
+### Example Test Cases
+
+```python
+def test_get_reference_range_valid_parameter():
+    """Test getting reference range for a valid parameter."""
+    result = get_reference_range("ferritin")
+    assert result["parameter"] == "ferritin"
+    assert result["unit"] == "ng/ml"
+    assert result["sex_specific"] is True
+
+def test_edge_case_long_parameter_name():
+    """Test with very long parameter names."""
+    long_param = "a" * 1000
+    with pytest.raises(ValueError):
+        get_reference_range(long_param)
+
+def test_concurrent_requests():
+    """Test handling of concurrent API requests."""
+    import threading
+    
+    results = {}
+    
+    def make_request(param, result_key):
+        response = client.get(f"/reference/{param}")
+        results[result_key] = response.status_code
+    
+    # Create multiple threads
+    threads = []
+    for i, param in enumerate(["ferritin", "vitamin d", "tsh"]):
+        t = threading.Thread(target=make_request, args=(param, f"result_{i}"))
+        threads.append(t)
+        t.start()
+    
+    # Wait for all threads to complete
+    for t in threads:
+        t.join()
+    
+    # Verify all requests were successful
+    for i in range(3):
+        assert results[f"result_{i}"] == 200
+```
+
+### Continuous Integration
+
+This project includes a GitHub Actions workflow (`.github/workflows/tests.yml`) that runs the test suite on every push and pull request. The workflow:
+
+1. Sets up Python
+2. Installs dependencies
+3. Runs the test suite with coverage
+4. Uploads coverage results to Codecov
+
+### Testing Best Practices
+
+1. **Isolation**: Each test should be independent and not rely on the state from other tests.
+2. **Descriptive Names**: Test functions should have clear, descriptive names that explain what they're testing.
+3. **Edge Cases**: Always test edge cases, including:
+   - Empty inputs
+   - Boundary values
+   - Invalid inputs
+   - Error conditions
+4. **Mocking**: Use mocking for external dependencies when appropriate.
+5. **Documentation**: Document the purpose of each test and any assumptions made.
+
+### MCP Tool Usage Examples
+
+Here are some examples of how to use the BloodTestTool MCP tool:
+
+```python
+from bloodtest_tools.mcp_tool import BloodTestTool
+
+# Initialize the tool
+tool = BloodTestTool()
+
+# Get reference values for a parameter
+result = tool.get_optimal_values("ferritin", "female")
+print(f"Optimal range for ferritin (female): {result['optimal_range']}")
+
+# List all available parameters
+parameters = tool.list_parameters()
+print(f"Available parameters: {[p['parameter'] for p in parameters]}")
+
+# Handle errors
+try:
+    result = tool.get_optimal_values("invalid_parameter")
+except HTTPException as e:
+    print(f"Error: {e.detail}")
+```
+
+### API Testing Examples
+
+You can test the API using `curl` or any HTTP client:
+
+```bash
+# Get API information
+curl http://localhost:8000/
+
+# List all parameters
+curl http://localhost:8000/parameters
+
+# Get reference range for ferritin
+curl "http://localhost:8000/reference/ferritin?sex=female"
+```
+
+### Performance Testing
+
+The test suite includes performance tests to ensure the API can handle concurrent requests efficiently. These tests verify that:
+
+1. Response times remain acceptable under load
+2. The system handles concurrent requests correctly
+3. No data corruption occurs during concurrent access
+
+To run performance tests:
+
+```bash
+pytest tests/test_performance.py -v
+```
+
+### Testing with Docker
+
+To run tests in a Docker container:
+
+```bash
+# Build the test image
+docker build --target test -t bloodtest-tests .
+
+# Run tests
+docker run --rm bloodtest-tests
+```
+
+### Debugging Tests
+
+If a test fails, you can use the following techniques to debug:
+
+1. Run with `-s` to see print statements:
+   ```bash
+   pytest tests/test_file.py -v -s
+   ```
+
+2. Use `pdb` to set breakpoints:
+   ```python
+   import pdb; pdb.set_trace()
+   ```
+
+3. Check the test coverage report to identify untested code paths.
+
+### Test Maintenance
+
+To keep the test suite maintainable:
+
+1. Update tests when adding new features or fixing bugs
+2. Remove or update obsolete tests
+3. Keep test data in a consistent state
+4. Document any test dependencies
 
 ### Getting Help
 
