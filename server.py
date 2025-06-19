@@ -6,11 +6,12 @@ import os
 
 from fastmcp import FastMCP
 from pydantic import BaseModel, Field
-from typing import Dict, List, Any, Optional, Callable
+from typing import Dict, List, Any, Optional, Callable, Union
 from abc import ABC, abstractmethod
 import json
 import yaml
 from pathlib import Path
+from starlette.middleware import Middleware
 import logging
 
 # Import the sequential thinking tool
@@ -293,7 +294,60 @@ Strictly apply the book's methodology using the information provided.
         """Starts the MCP server"""
         self.logger.info(f"Starting MCP server with args: {kwargs}")
         self._setup_health_check()
-        self.mcp.run(**kwargs)
+        
+        # Configure CORS middleware if using HTTP transport
+        middleware = None
+        if kwargs.get('transport') in ['sse', 'streamable-http']:
+            from fastapi.middleware.cors import CORSMiddleware
+            
+            self.logger.info("Configuring CORS middleware for HTTP transport")
+            middleware = [
+                Middleware(
+                    CORSMiddleware,
+                    allow_origins=["*"],  # Allow all origins in development
+                    allow_credentials=True,
+                    allow_methods=["*"],
+                    allow_headers=["*"],
+                )
+            ]
+        
+        # Get the transport type, default to 'stdio' if not specified
+        transport = kwargs.pop('transport', 'stdio')
+        
+        # Run the server with the configured transport
+        if transport in ['sse', 'streamable-http']:
+            import asyncio
+            
+            # Get host and port from kwargs before passing to http_app
+            host = kwargs.pop('host', '0.0.0.0')
+            port = kwargs.pop('port', 8000)
+            path = kwargs.pop('path', None)
+            
+            # Create the FastAPI app with CORS middleware
+            app = self.mcp.http_app(
+                path=path,
+                transport=transport,
+                middleware=middleware
+            )
+            
+            # Add a simple health check endpoint using FastMCP's HTTP route handling
+            async def health_check():
+                return {"status": "ok"}
+                
+            # Add the route to the FastAPI app
+            app.add_route("/health", health_check, methods=["GET"])
+            
+            self.logger.info(f"Running MCP server with {transport} transport on http://{host}:{port}")
+            
+            # Run the HTTP server
+            import uvicorn
+            config = uvicorn.Config(app, host=host, port=port, log_level="info")
+            server = uvicorn.Server(config)
+            asyncio.run(server.serve())
+        else:
+            # For stdio transport, just run it directly
+            self.logger.info("Running MCP server with stdio transport")
+            self.mcp.run(transport=transport)
 
 # =======================
 # UTILISATION

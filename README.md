@@ -98,40 +98,174 @@ server:
 
 ### API Documentation
 
-#### Base URL
+### Base URLs
 
-```bash
-https://supplement-therapy.up.railway.app/sse
-```
+- **Production**: `https://supplement-therapy.up.railway.app`
+- **Local Development**: `http://localhost:8000`
+- **SSE Endpoint**: `/sse` (for Server-Sent Events when MCP is enabled)
 
-#### Authentication
+### Authentication
 
-Include your API key in the `Authorization` header:
+Most endpoints are publicly accessible, but for production use, you should implement authentication. The API supports Bearer token authentication:
 
 ```http
 Authorization: Bearer your_api_key_here
 ```
 
-### Blood Test Reference Values API
+### Core Endpoints
 
-#### Endpoints
+#### 1. API Information
 
-- `GET /parameters` - List all available parameters
-- `GET /reference/{parameter}` - Get reference ranges for a specific parameter
-- `GET /health` - Check API status
+- **Endpoint**: `GET /`
+- **Description**: Get information about the API and available endpoints
+- **Response**:
+  ```json
+  {
+    "name": "Blood Test Reference Values API",
+    "version": "1.0.0",
+    "description": "API for retrieving optimal blood test reference values based on medical guidelines.",
+    "endpoints": {
+      "GET /parameters": "List all available parameters",
+      "GET /reference/{parameter}": "Get reference range for a specific parameter",
+      "GET /health": "Health check endpoint",
+      "GET /sse": "MCP Server-Sent Events endpoint (when MCP enabled)"
+    },
+    "blood_parameters_supported": 8,
+    "functional_medicine_ranges": true
+  }
+  ```
 
-#### Supported Parameters
+#### 2. Health Check
 
-| Parameter | Unit | Description |
-|-----------|------|-------------|
-| ferritin | ng/ml | Sex-specific ranges |
-| tsh | mIU/l | Thyroid function |
-| vitamin_d | ng/ml | 25-OH Vitamin D |
-| vitamin_b12 | pmol/l | Holotranscobalamin |
-| folate_rbc | ng/ml | Red blood cell folate |
-| zinc | mg/l | Essential mineral |
-| magnesium | mmol/l | Whole blood magnesium |
-| selenium | µg/l | Antioxidant mineral |
+- **Endpoint**: `GET /health`
+- **Description**: Verify API status and connectivity
+- **Response**:
+  ```json
+  {
+    "status": "healthy",
+    "book": "Der Blutwerte Coach, Naehrstoff-Therapie",
+    "version": "1.0",
+    "rag_enabled": true,
+    "api_functional": true,
+    "blood_parameters_count": 8,
+    "api_endpoints": {
+      "blood_test_parameters": "/parameters",
+      "blood_test_reference": "/reference/{parameter}",
+      "mcp_sse": "/sse"
+    }
+  }
+  ```
+
+#### 3. List Blood Test Parameters
+
+- **Endpoint**: `GET /parameters`
+- **Description**: Get a list of all available blood test parameters
+- **Response**:
+  ```json
+  {
+    "parameters": [
+      "ferritin",
+      "tsh",
+      "vitamin_d",
+      "vitamin_b12",
+      "folate_rbc",
+      "zinc",
+      "magnesium",
+      "selenium"
+    ]
+  }
+  ```
+
+#### 4. Get Reference Ranges
+
+- **Endpoint**: `GET /reference/{parameter}`
+- **Description**: Get reference ranges for a specific blood test parameter
+- **Path Parameters**:
+  - `parameter` (string, required): The blood test parameter (e.g., 'ferritin', 'vitamin_d')
+- **Query Parameters**:
+  - `sex` (string, optional): Filter by sex ('male' or 'female')
+- **Response**:
+  ```json
+  {
+    "parameter": "ferritin",
+    "unit": "ng/ml",
+    "optimal_range": {
+      "male": {"min": 100, "max": 300},
+      "female": {"min": 50, "max": 150}
+    },
+    "conventional_range": {
+      "male": {"min": 20, "max": 500},
+      "female": {"min": 10, "max": 200}
+    },
+    "interpretation": "Optimal ranges for general health and energy"
+  }
+  ```
+
+### MCP (Model-Controller-Presenter) Endpoints
+
+#### 1. Server-Sent Events (SSE)
+
+- **Endpoint**: `GET /sse`
+- **Description**: MCP protocol endpoint for real-time communication
+- **Headers**:
+  ```
+  Accept: text/event-stream
+  Cache-Control: no-cache
+  Connection: keep-alive
+  ```
+- **Response**: Server-Sent Events stream
+
+### Error Responses
+
+All error responses follow this format:
+
+```json
+{
+  "detail": "Error message describing the issue"
+}
+```
+
+### Example Usage
+
+```python
+import requests
+
+# Get all available parameters
+response = requests.get("http://localhost:8000/parameters")
+print("Available parameters:", response.json()["parameters"])
+
+# Get reference range for ferritin
+response = requests.get(
+    "http://localhost:8000/reference/ferritin",
+    params={"sex": "female"}
+)
+print("Ferritin reference ranges:", response.json())
+
+# Check API health
+response = requests.get("http://localhost:8000/health")
+print("API status:", response.json()["status"])
+```
+
+### Rate Limiting
+
+- **Rate Limit**: 100 requests per minute per IP address
+- **Headers**:
+  - `X-RateLimit-Limit`: Maximum requests allowed
+  - `X-RateLimit-Remaining`: Remaining requests in current window
+  - `X-RateLimit-Reset`: Time when the rate limit resets (UTC timestamp)
+
+### Supported Blood Test Parameters
+
+| Parameter    | Unit   | Description                     |
+|--------------|--------|---------------------------------|
+| ferritin     | ng/ml  | Iron storage protein            |
+| tsh          | mIU/l  | Thyroid-stimulating hormone      |
+| vitamin_d    | ng/ml  | 25-Hydroxy Vitamin D            |
+| vitamin_b12  | pmol/l | Vitamin B12 (Holotranscobalamin) |
+| folate_rbc   | ng/ml  | Red blood cell folate           |
+| zinc         | mg/l   | Essential mineral               |
+| magnesium    | mmol/l | Whole blood magnesium           |
+| selenium     | µg/l   | Antioxidant mineral             |
 
 ### Technical Stack
 

@@ -1,42 +1,38 @@
 version: '3.8'
 
 services:
-  # Blood Test Reference API Service
-  bloodtest-api:
-    container_name: bloodtest-api
+  # MCP Server Service
+  mcp-server:
+    container_name: mcp-server
     build:
       context: .
       target: builder  # Build using the builder stage
     ports:
       - "8000:8000"
     volumes:
-      - ./bloodtest_tools:/app/bloodtest_tools:ro  # Read-only for Python modules
-      - ./scripts:/app/scripts:ro                  # Read-only for scripts
-      - ./main.py:/app/main.py:ro                  # Main application entry point
-      - ./faiss_index:/app/faiss_index             # Read-write for FAISS index
-      - ./resources:/app/resources:ro              # Read-only for resources
-      - ./books:/app/books:ro                      # Read-only for book configs
+      - .:/app
+      - ./faiss_index:/app/faiss_index
     environment:
       - PYTHONUNBUFFERED=1
       - PYTHONDONTWRITEBYTECODE=1
       - ENV=${ENV:-PRODUCTION}
-      - HOST=0.0.0.0
-      - PORT=8000
-      # RAG-specific variables (if needed)
-      - PDF_PATH=${PDF_PATH:-/app/resources/gtd.pdf}
-      - INDEX_NAME=${INDEX_NAME:-supplement-therapy}
-      - INDEX_DIRECTORY=${INDEX_DIRECTORY:-/app/faiss_index}
-      - FORCE_REINDEX=${FORCE_REINDEX:-false}
+      - PYTHONPATH=/app
+      # RAG-specific variables
+      - INDEX_DIRECTORY=/app/faiss_index
+      # Force HTTP transport
+      - MCP_TRANSPORT=http
+      - MCP_HOST=0.0.0.0
+      - MCP_PORT=8000
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 5s
+      start_period: 10s
     restart: unless-stopped
-    command: sh -c "python scripts/init_rag.py && uvicorn bloodtest_tools.api:app --host $HOST --port $PORT --reload"
+    command: python start_server.py
 
-  # Add any additional services like databases, caches, etc. here
+  # Uncomment and configure additional services as needed
   # redis:
   #   image: redis:alpine
   #   ports:

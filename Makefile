@@ -33,7 +33,7 @@ setup:
 	@echo "Setting up development environment..."
 	$(PYTHON) -m venv $(VENV)
 	$(PIP_VENV) install --upgrade pip
-	$(PIP_VENV) install -r requirements-dev.txt
+	$(PIP_VENV) install -r requirements.txt
 	$(PIP_VENV) install -e .
 	@echo "\nDevelopment environment ready! Activate it with 'source $(VENV)/bin/activate'"
 
