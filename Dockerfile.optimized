@@ -63,5 +63,4 @@ HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
 
 # Run the application
 # Use shell form to allow environment variable expansion
-# Using integrated_server which has proper health endpoint
-CMD sh -c "python integrated_server.py"
+CMD sh -c "python railway_server.py"
