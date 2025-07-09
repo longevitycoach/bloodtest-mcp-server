@@ -24,8 +24,12 @@ def main():
         
         # Initialize and start the server with SSE transport
         mcp = BookMCPServer(config_path=config_path)
-        # Using SSE transport for HTTP/SSE communication on port 8001
-        mcp.run(transport="sse", host="0.0.0.0", port=8001)
+        # Using SSE transport for HTTP/SSE communication
+        # Get port from environment variable or default to 8000
+        port = int(os.environ.get("PORT", 8000))
+        host = os.environ.get("HOST", "0.0.0.0")
+        logger.info(f"Starting server on {host}:{port}")
+        mcp.run(transport="sse", host=host, port=port)
         
     except Exception as e:
         logger.error(f"Failed to start server: {e}", exc_info=True)
