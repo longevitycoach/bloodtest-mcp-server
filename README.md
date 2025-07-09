@@ -2,7 +2,9 @@
 
 A comprehensive health coaching system that combines blood test analysis with evidence-based nutritional therapy recommendations, powered by Retrieval-Augmented Generation (RAG) technology.
 
-**🔗 Live Endpoint**: [https://bloodtest-mcp.up.railway.app](https://bloodtest-mcp.up.railway.app)
+**🔗 Live Endpoints**: 
+- Primary: [https://supplement-therapy.up.railway.app](https://supplement-therapy.up.railway.app) (Active)
+- New Domain: [https://bloodtest-mcp.up.railway.app](https://bloodtest-mcp.up.railway.app) (Being configured)
 
 ## Table of Contents
 
@@ -55,12 +57,15 @@ A comprehensive health coaching system that combines blood test analysis with ev
 ### Getting Started
 
 1. **Access the Production System**
-   - Web Interface: [https://bloodtest-mcp.up.railway.app](https://bloodtest-mcp.up.railway.app)
-   - API Base URL: `https://bloodtest-mcp.up.railway.app`
-   - MCP SSE Endpoint: `https://bloodtest-mcp.up.railway.app/sse`
-   - Health Check: `https://bloodtest-mcp.up.railway.app/health`
    
-   **Legacy URL** (still active): `https://supplement-therapy.up.railway.app`
+   **Current Active Endpoint**:
+   - Web Interface: [https://supplement-therapy.up.railway.app](https://supplement-therapy.up.railway.app)
+   - API Base URL: `https://supplement-therapy.up.railway.app`
+   - MCP SSE Endpoint: `https://supplement-therapy.up.railway.app/sse`
+   - Health Check: `https://supplement-therapy.up.railway.app/health`
+   
+   **New Endpoint** (being configured):
+   - `https://bloodtest-mcp.up.railway.app` - Will be available once Railway configuration is complete
 
 2. **Authentication**
    - Currently, no authentication is required for public endpoints
@@ -85,13 +90,15 @@ To use this MCP server with Claude Desktop:
          "args": [
            "-y",
            "@modelcontextprotocol/server-sse",
-           "https://bloodtest-mcp.up.railway.app/sse"
+           "https://supplement-therapy.up.railway.app/sse"
          ],
          "env": {}
        }
      }
    }
    ```
+   
+   **Note**: Once `bloodtest-mcp.up.railway.app` is active, update the URL to `https://bloodtest-mcp.up.railway.app/sse`
 
 3. **Save and Restart Claude Desktop**
    - Save the configuration file
@@ -212,12 +219,12 @@ To use this MCP server with Claude Desktop:
 import requests
 
 # Get all available parameters
-response = requests.get("https://bloodtest-mcp.up.railway.app/parameters")
+response = requests.get("https://supplement-therapy.up.railway.app/parameters")
 print("Available parameters:", response.json()["parameters"])
 
 # Get reference range for ferritin
 response = requests.get(
-    "https://bloodtest-mcp.up.railway.app/reference/ferritin",
+    "https://supplement-therapy.up.railway.app/reference/ferritin",
     params={"sex": "female"}
 )
 print("Ferritin reference:", response.json())
@@ -277,9 +284,10 @@ The application is deployed on Railway:
    ```
 
 3. **Monitoring**
-   - Health check: https://bloodtest-mcp.up.railway.app/health
+   - Health check: https://supplement-therapy.up.railway.app/health
    - View logs in Railway dashboard
-   - Public endpoint: https://bloodtest-mcp.up.railway.app
+   - Current endpoint: https://supplement-therapy.up.railway.app
+   - New endpoint (pending): https://bloodtest-mcp.up.railway.app
 
 #### Docker
 
