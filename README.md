@@ -254,6 +254,9 @@ pytest tests/test_api_endpoints.py -v
 
 # Run with Makefile
 make test
+
+# Run MCP Integration Tests
+python tests/test_mcp_client.py
 ```
 
 #### Test Organization
@@ -262,7 +265,53 @@ make test
 - `tests/test_bloodtest_tools.py` - Core functionality tests
 - `tests/test_edge_cases.py` - Edge case handling
 - `tests/test_integration.py` - Integration tests
+- `tests/test_mcp_client.py` - MCP SSE protocol tests
+- `tests/test_mcp_integration.py` - Comprehensive MCP integration tests
 - `testdata/` - Comprehensive test scenarios and data
+
+#### MCP Integration Testing
+
+The MCP integration tests validate the server's SSE (Server-Sent Events) protocol implementation and knowledge base functionality:
+
+**Positive Test Cases (10 tests):**
+1. **Health Check** - Verifies server health endpoint
+2. **SSE Connection** - Tests SSE endpoint connectivity
+3. **Ferritin Knowledge Query** - Validates optimal range information
+4. **Vitamin D Query** - Tests deficiency symptom searches
+5. **Magnesium Supplementation** - Verifies dosage guidance
+6. **TSH Interpretation** - Tests thyroid value interpretation
+7. **B12 Holotranscobalamin** - Validates B12 information retrieval
+8. **Selenium Immune System** - Tests mineral-immune connections
+9. **Zinc-Copper Ratio** - Validates supplementation balance info
+10. **Folate Requirements** - Tests folate reference information
+
+**Negative Test Cases (10 tests):**
+1. **Invalid Endpoint** - 404 response for non-existent paths
+2. **Wrong HTTP Method** - Rejects POST on SSE endpoint
+3. **Invalid Health Method** - Rejects POST on health endpoint
+4. **Invalid API Path** - Handles /api/invalid correctly
+5. **Test Path** - Rejects /test endpoint
+6. **Admin Path** - Rejects /admin access
+7. **Path Traversal** - Blocks /../etc/passwd attempts
+8. **Health Path Traversal** - Blocks /health/../../
+9. **SSE Subpath** - Rejects /sse/invalid
+10. **Null Path** - Handles /null endpoint
+
+**Running Integration Tests Locally:**
+```bash
+# Build and run Docker container
+docker build -t bloodtest-mcp-server:local -f Dockerfile.optimized .
+docker run -d --name bloodtest-local -p 8001:8000 bloodtest-mcp-server:local
+
+# Run integration tests
+python tests/test_mcp_client.py
+
+# Check health endpoint
+curl http://localhost:8001/health
+
+# Clean up
+docker stop bloodtest-local && docker rm bloodtest-local
+```
 
 ### Deployment
 
