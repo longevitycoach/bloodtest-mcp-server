@@ -63,4 +63,4 @@ HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
 
 # Run the application
 # Use shell form to allow environment variable expansion
-CMD sh -c "python railway_server.py"
+CMD sh -c "python start_server.py"

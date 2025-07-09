@@ -25,13 +25,16 @@ pip install -r requirements.txt
 
 ### Running the Application
 ```bash
-# Run the MCP server locally
-python server.py --host 0.0.0.0 --port 8000
+# Run the MCP server locally (with health endpoint)
+python start_server.py
 
-# Run the integrated server (MCP + API)
-python integrated_server.py --host 0.0.0.0 --port 8000
+# The server will:
+# - Start on http://localhost:8000 (or PORT env variable)
+# - Provide health endpoint at /health
+# - Provide MCP SSE endpoint at /sse
+# - Load configuration from resources/structure.yaml
 
-# Run just the FastAPI server
+# Run just the FastAPI server (blood test API only)
 python main.py  # or: python -m uvicorn bloodtest_tools.api:app --reload
 
 # Using Docker
