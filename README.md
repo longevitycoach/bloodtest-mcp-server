@@ -39,6 +39,43 @@ A comprehensive health coaching system that combines blood test analysis with ev
 
 ### MCP Configuration
 
+#### Claude Desktop Integration
+
+To use this MCP server with Claude Desktop:
+
+1. **Open Claude Desktop Configuration**
+   - Click on **Claude** menu (macOS) or **File** menu (Windows)
+   - Select **Settings** → **Developer** → **Edit Config**
+
+2. **Add Server Configuration**
+   Add the following to your `claude_desktop_config.json`:
+
+   ```json
+   {
+     "mcpServers": {
+       "bloodtest-health-coach": {
+         "command": "npx",
+         "args": [
+           "-y",
+           "@modelcontextprotocol/server-sse",
+           "https://supplement-therapy.up.railway.app/sse"
+         ],
+         "env": {}
+       }
+     }
+   }
+   ```
+
+3. **Save and Restart Claude Desktop**
+   - Save the configuration file
+   - Completely quit and restart Claude Desktop
+   - The health coach tools should now appear in Claude
+
+**Configuration File Locations:**
+- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+- Linux: `~/.config/Claude/claude_desktop_config.json`
+
 #### Available Tools
 
 1. **`get_book_info`**
@@ -280,7 +317,7 @@ print("API status:", response.json()["status"])
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-org/bloodtest-mcp-server.git
+   git clone https://github.com/longevitycoach/bloodtest-mcp-server.git
    cd bloodtest-mcp-server
    ```
 
@@ -392,6 +429,39 @@ pytest --cov=bloodtest_tools --cov-report=html tests/
 ```
 
 ### Deployment
+
+#### Railway (Production)
+
+The application is deployed on Railway and accessible at:
+- **Production URL**: https://supplement-therapy.up.railway.app
+- **MCP SSE Endpoint**: https://supplement-therapy.up.railway.app/sse
+- **Health Check**: https://supplement-therapy.up.railway.app/health
+
+**Deploying to Railway:**
+
+1. **Connect Repository**
+   - Connect your GitHub repository to Railway
+   - Railway will auto-deploy on push to main branch
+
+2. **Environment Variables**
+   Set these in Railway dashboard:
+   ```
+   PORT=8000
+   ENV=production
+   PDF_DIRECTORY=/app/resources/books
+   INDEX_DIRECTORY=/app/faiss_index
+   INDEX_NAME=supplement-therapy
+   ```
+
+3. **Deployment Configuration**
+   - Uses optimized Dockerfile (`Dockerfile.optimized`)
+   - Includes pre-built FAISS index
+   - Health check endpoint automatically monitored
+
+4. **Monitoring**
+   - View logs in Railway dashboard
+   - Health endpoint: `/health`
+   - Check deployment status at Railway project dashboard
 
 #### Docker
 
@@ -1633,8 +1703,8 @@ python client_test.py
 1. **Clone the repository**
 
    ```sh
-   git clone git@github.com:aymerigermain/book-mcp-server.git
-   cd book-mcp-server
+   git clone git@github.com:longevitycoach/bloodtest-mcp-server.git
+   cd bloodtest-mcp-server
    ```
 
 2. **Build and run with Docker Compose**

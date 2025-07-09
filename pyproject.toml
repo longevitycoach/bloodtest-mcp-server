@@ -1,5 +1,5 @@
 [project]
-name = "book-mcp-server"
+name = "bloodtest-mcp-server"
 version = "0.1.0"
 description = "Book Knowledge MCP Server with FAISS RAG"
 readme = "README.md"
