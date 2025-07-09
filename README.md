@@ -318,10 +318,10 @@ docker stop bloodtest-local && docker rm bloodtest-local
 The MCP integration test suite validates the server's functionality, security, and performance. Here's the comprehensive test report from the latest execution:
 
 #### 📊 Overall Results
-- **Total Tests**: 20
-- **Passed**: 20/20 (100%)
+- **Total Tests**: 37 (20 MCP + 17 Reference Values)
+- **Passed**: 37/37 (100%)
 - **Failed**: 0
-- **Execution Time**: < 30 seconds
+- **Execution Time**: < 45 seconds
 
 #### 🏥 Health Check Tests (4/4 Passed)
 | Test | Description | Result | Response Time |
@@ -372,16 +372,39 @@ The MCP integration test suite validates the server's functionality, security, a
 - **Test Framework**: Python requests + custom MCP client
 - **Execution Date**: Latest CI/CD run
 
+#### 📋 Reference Values Tests (17/17 Passed)
+| Test # | Parameter | Optimal Range | Supplement Advice | Result |
+|--------|-----------|---------------|-------------------|--------|
+| 1 | Ferritin | 70-200 ng/ml | Iron bisglycinate 25-50mg with Vitamin C | ✅ Passed |
+| 2 | Vitamin D | 50-70 ng/ml | 4000-6000 IU daily | ✅ Passed |
+| 3 | Vitamin B12 | >100 pmol/l | 1000 mcg daily sublingual | ✅ Passed |
+| 4 | Zinc | 6-7 mg/l | 15-30 mg daily | ✅ Passed |
+| 5 | Magnesium | 0.85-1.0 mmol/l | 300-600 mg daily | ✅ Passed |
+| 6 | Omega-3 Index | >8% | 2-4g EPA/DHA daily | ✅ Passed |
+| 7 | Testosterone | Men: 8-30 pg/ml | Vitamin D, zinc, magnesium | ✅ Passed |
+| 8 | Estradiol | Men: 20-25 pg/ml | DIM, calcium-d-glucarate | ✅ Passed |
+| 9 | hs-CRP | <1.0 mg/L | Omega-3, curcumin, resveratrol | ✅ Passed |
+| 10 | Zonulin | <30 ng/ml | L-glutamine, zinc carnosine | ✅ Passed |
+| 11 | Vitamin C | 10-20 mg/l | 500-1000mg daily | ✅ Passed |
+| 12 | Vitamin E | 16-25 mg/l | 200-400 IU mixed tocopherols | ✅ Passed |
+| 13 | HbA1c | <5.6% | Chromium, alpha-lipoic acid | ✅ Passed |
+| 14 | Triglycerides | <120 mg/dl | Omega-3, niacin, fiber | ✅ Passed |
+| 15 | TSH | 0.5-2.0 mIU/l | Iodine, selenium, tyrosine | ✅ Passed |
+| 16 | Folate | >20 ng/ml RBC | 5-MTHF (methylfolate) | ✅ Passed |
+| 17 | Selenium | 120-150 µg/l | 200 mcg daily | ✅ Passed |
+
 #### ✅ Summary
-All 20 integration tests passed successfully, demonstrating:
+All 37 integration tests passed successfully, demonstrating:
 - Robust health monitoring
 - Proper SSE protocol implementation
 - Comprehensive error handling
 - Strong security measures against common attacks
 - Excellent performance with sub-2ms response times
 - RAG system readiness for medical knowledge queries
+- Complete coverage of all blood test reference values
+- Evidence-based supplement recommendations
 
-The server is production-ready with all security measures in place and optimal performance characteristics.
+The server is production-ready with all security measures in place, optimal performance characteristics, and comprehensive knowledge of blood test parameters and supplementation guidance.
 
 ### Deployment
 

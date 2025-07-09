@@ -64,6 +64,14 @@ echo
 python tests/test_mcp_client.py
 MCP_RESULT=$?
 
+echo
+echo "🧪 Running reference values tests..."
+echo
+
+# Run reference values tests
+python tests/test_reference_values_simple.py
+REF_RESULT=$?
+
 # Clean up
 echo
 echo "🧹 Cleaning up..."
@@ -74,7 +82,7 @@ echo "✅ Cleanup complete"
 # Summary
 echo
 echo "=== Test Summary ==="
-if [ $HEALTH_RESULT -eq 0 ] && [ $MCP_RESULT -eq 0 ]; then
+if [ $HEALTH_RESULT -eq 0 ] && [ $MCP_RESULT -eq 0 ] && [ $REF_RESULT -eq 0 ]; then
     echo "✅ All tests passed!"
     exit 0
 else
