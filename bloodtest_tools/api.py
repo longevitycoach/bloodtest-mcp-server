@@ -80,26 +80,7 @@ async def root():
         "description": "API for retrieving optimal blood test reference values based on medical guidelines.",
         "endpoints": {
             "GET /parameters": "List all available parameters",
-            "GET /reference/{parameter}": "Get reference range for a specific parameter",
-            "GET /test-error": "Test endpoint to verify Sentry error logging"
+            "GET /reference/{parameter}": "Get reference range for a specific parameter"
         }
     }
 
-@app.get("/test-error")
-async def test_error():
-    """Test endpoint to verify Sentry error logging."""
-    try:
-        # This will raise a ZeroDivisionError
-        result = 1 / 0
-        return {"result": result}
-    except Exception as e:
-        # Log the error to Sentry
-        import sentry_sdk
-        sentry_sdk.capture_exception(e)
-        # Also log it with the standard logger (which is also captured by Sentry)
-        import logging
-        logger = logging.getLogger(__name__)
-        logger.error("An error occurred in test_error", exc_info=True)
-        
-        # Return a 500 error with the exception details
-        raise HTTPException(status_code=500, detail=str(e))
